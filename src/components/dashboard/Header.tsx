@@ -5,10 +5,16 @@ import { Bell, Search, ChevronDown, Sun, Moon, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useTheme } from "next-themes";
 
 export function DashboardHeader() {
   const isMobile = useIsMobile();
   const { toggleSidebar } = useSidebar();
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
   
   return (
     <header className="flex h-12 sm:h-14 items-center gap-2 sm:gap-4 border-b bg-card px-2 sm:px-6">
@@ -49,17 +55,26 @@ export function DashboardHeader() {
         </span>
       </Button>
       
-      {!isMobile && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="hidden sm:flex"
-        >
-          <Sun className="mr-2 h-4 w-4" />
-          Light
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      )}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={toggleTheme}
+        className="hidden sm:flex items-center"
+      >
+        {theme === 'dark' ? (
+          <>
+            <Sun className="mr-2 h-4 w-4" />
+            Light
+          </>
+        ) : (
+          <>
+            <Moon className="mr-2 h-4 w-4" />
+            Dark
+          </>
+        )}
+        <ChevronDown className="ml-2 h-4 w-4" />
+      </Button>
     </header>
   );
 }
+
