@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   LineChart,
   Line,
@@ -31,18 +32,20 @@ export function TrafficMetricsChart({
   className,
   aspectRatio = 2
 }: TrafficMetricsChartProps) {
+  const isMobile = useIsMobile();
+  
   return (
     <Card className={cn("overflow-hidden", className)}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2">
+        <CardTitle className="text-xs sm:text-sm font-medium">{title}</CardTitle>
         <div className="flex items-center gap-1">
-          <Badge variant="outline" className="bg-traffic-blue/10 text-traffic-blue border-traffic-blue/20">
+          <Badge variant="outline" className="bg-traffic-blue/10 text-traffic-blue border-traffic-blue/20 text-[10px] sm:text-xs">
             Last 24 Hours
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-3">
-        <div style={{ width: "100%", height: "100%", aspectRatio }}>
+      <CardContent className="p-1 sm:p-3">
+        <div style={{ width: "100%", height: "100%", aspectRatio: isMobile ? 1.5 : aspectRatio }}>
           <ResponsiveContainer width="100%" height="100%">
             {type === "line" ? (
               <LineChart
@@ -53,23 +56,26 @@ export function TrafficMetricsChart({
                 <XAxis 
                   dataKey="name" 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={10}
+                  fontSize={isMobile ? 8 : 10}
                   tickLine={false}
                   axisLine={false}
+                  tick={isMobile ? { fontSize: 8 } : { fontSize: 10 }}
+                  interval={isMobile ? 1 : 0}
                 />
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={10}
+                  fontSize={isMobile ? 8 : 10}
                   tickLine={false}
                   axisLine={false}
-                  width={30}
+                  width={20}
+                  tick={isMobile ? { fontSize: 8 } : { fontSize: 10 }}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: "hsl(var(--card))",
                     borderColor: "hsl(var(--border))",
                     borderRadius: "var(--radius)",
-                    fontSize: "12px"
+                    fontSize: isMobile ? "10px" : "12px"
                   }}
                 />
                 <Line
@@ -98,23 +104,26 @@ export function TrafficMetricsChart({
                 <XAxis 
                   dataKey="name" 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={10}
+                  fontSize={isMobile ? 8 : 10}
                   tickLine={false}
                   axisLine={false}
+                  tick={isMobile ? { fontSize: 8 } : { fontSize: 10 }}
+                  interval={isMobile ? 1 : 0}
                 />
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={10}
+                  fontSize={isMobile ? 8 : 10}
                   tickLine={false}
                   axisLine={false}
-                  width={30}
+                  width={20}
+                  tick={isMobile ? { fontSize: 8 } : { fontSize: 10 }}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: "hsl(var(--card))",
                     borderColor: "hsl(var(--border))",
                     borderRadius: "var(--radius)",
-                    fontSize: "12px"
+                    fontSize: isMobile ? "10px" : "12px"
                   }}
                 />
                 <Bar dataKey="value" fill="#1890FF" radius={[4, 4, 0, 0]} />

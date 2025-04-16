@@ -9,6 +9,7 @@ import { TrafficLight } from "@/components/dashboard/TrafficLight";
 import { TrafficMap } from "@/components/dashboard/TrafficMap";
 import { TrafficMetricsChart } from "@/components/dashboard/TrafficMetricsChart";
 import { SystemStatusCard } from "@/components/dashboard/SystemStatusCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Car, 
   AlertTriangle, 
@@ -29,6 +30,7 @@ import {
 
 const Index = () => {
   const [trafficLights, setTrafficLights] = useState<TrafficLightType[]>(trafficLightData);
+  const isMobile = useIsMobile();
 
   const handleChangeLightMode = (id: string, mode: TrafficLightMode) => {
     setTrafficLights(prev => 
@@ -50,11 +52,11 @@ const Index = () => {
     <div className="flex min-h-screen bg-background text-foreground">
       <SidebarProvider>
         <DashboardSidebar />
-        <div className="flex-1 flex flex-col ml-[240px] transition-all duration-300">
+        <div className={`flex-1 flex flex-col ${isMobile ? "" : "ml-[240px]"} transition-all duration-300`}>
           <DashboardHeader />
           
-          <div className="flex-1 p-6 overflow-auto">
-            <div className="grid gap-6 md:grid-cols-4 mb-6">
+          <div className="flex-1 p-3 sm:p-6 overflow-auto">
+            <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-3 sm:mb-6">
               <StatCard
                 title="Total Traffic Volume"
                 value="25,429"
@@ -85,14 +87,14 @@ const Index = () => {
               />
             </div>
             
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-3 sm:mb-6">
               <TrafficMap className="md:col-span-2" />
               <SystemStatusCard items={systemStatusData} />
             </div>
             
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Traffic Analytics</h2>
-              <div className="grid md:grid-cols-2 gap-6">
+            <div className="mb-3 sm:mb-6">
+              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Traffic Analytics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
                 <TrafficMetricsChart
                   title="Traffic Volume (24 Hours)"
                   type="line"
@@ -106,9 +108,9 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Live Camera Feeds</h2>
-              <div className="grid md:grid-cols-4 gap-6">
+            <div className="mb-3 sm:mb-6">
+              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Live Camera Feeds</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {trafficCameraData.map((camera) => (
                   <TrafficCameraFeed
                     key={camera.id}
@@ -118,9 +120,9 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Traffic Light Control</h2>
-              <div className="grid md:grid-cols-4 gap-6">
+            <div className="mb-3 sm:mb-6">
+              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Traffic Light Control</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {trafficLights.map((light) => (
                   <TrafficLight
                     key={light.id}
