@@ -34,6 +34,11 @@ export function TrafficMetricsChart({
 }: TrafficMetricsChartProps) {
   const isMobile = useIsMobile();
   
+  // Limit data points on mobile to avoid crowding
+  const displayData = isMobile && data.length > 8 
+    ? data.filter((_, index) => index % 2 === 0) 
+    : data;
+  
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2">
@@ -45,14 +50,14 @@ export function TrafficMetricsChart({
         </div>
       </CardHeader>
       <CardContent className="p-1 sm:p-3">
-        <div style={{ width: "100%", height: "100%", aspectRatio: isMobile ? 1.5 : aspectRatio }}>
+        <div style={{ width: "100%", height: "100%", aspectRatio: isMobile ? 1.2 : aspectRatio }}>
           <ResponsiveContainer width="100%" height="100%">
             {type === "line" ? (
               <LineChart
-                data={data}
+                data={displayData}
                 margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={isMobile ? 0.5 : 0.8} />
                 <XAxis 
                   dataKey="name" 
                   stroke="hsl(var(--muted-foreground))"
@@ -67,7 +72,7 @@ export function TrafficMetricsChart({
                   fontSize={isMobile ? 8 : 10}
                   tickLine={false}
                   axisLine={false}
-                  width={20}
+                  width={isMobile ? 15 : 20}
                   tick={isMobile ? { fontSize: 8 } : { fontSize: 10 }}
                 />
                 <Tooltip 
@@ -75,32 +80,35 @@ export function TrafficMetricsChart({
                     backgroundColor: "hsl(var(--card))",
                     borderColor: "hsl(var(--border))",
                     borderRadius: "var(--radius)",
-                    fontSize: isMobile ? "10px" : "12px"
+                    fontSize: isMobile ? "10px" : "12px",
+                    padding: isMobile ? "4px" : "8px"
                   }}
                 />
                 <Line
                   type="monotone"
                   dataKey="value"
                   stroke="#1890FF"
-                  strokeWidth={2}
+                  strokeWidth={isMobile ? 1.5 : 2}
                   dot={false}
-                  activeDot={{ r: 4 }}
+                  activeDot={{ r: isMobile ? 3 : 4 }}
                 />
                 <Line
                   type="monotone"
                   dataKey="average"
                   stroke="#13C2C2"
-                  strokeWidth={2}
+                  strokeWidth={isMobile ? 1.5 : 2}
                   strokeDasharray="5 5"
                   dot={false}
                 />
               </LineChart>
             ) : (
               <BarChart
-                data={data}
+                data={displayData}
                 margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
+                barGap={isMobile ? 1 : 3}
+                barSize={isMobile ? 10 : undefined}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={isMobile ? 0.5 : 0.8} />
                 <XAxis 
                   dataKey="name" 
                   stroke="hsl(var(--muted-foreground))"
@@ -115,7 +123,7 @@ export function TrafficMetricsChart({
                   fontSize={isMobile ? 8 : 10}
                   tickLine={false}
                   axisLine={false}
-                  width={20}
+                  width={isMobile ? 15 : 20}
                   tick={isMobile ? { fontSize: 8 } : { fontSize: 10 }}
                 />
                 <Tooltip 
@@ -123,10 +131,11 @@ export function TrafficMetricsChart({
                     backgroundColor: "hsl(var(--card))",
                     borderColor: "hsl(var(--border))",
                     borderRadius: "var(--radius)",
-                    fontSize: isMobile ? "10px" : "12px"
+                    fontSize: isMobile ? "10px" : "12px",
+                    padding: isMobile ? "4px" : "8px"
                   }}
                 />
-                <Bar dataKey="value" fill="#1890FF" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="#1890FF" radius={[3, 3, 0, 0]} />
               </BarChart>
             )}
           </ResponsiveContainer>

@@ -11,19 +11,20 @@ export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-card px-4 sm:px-6">
+    <header className="flex h-12 sm:h-14 items-center gap-2 sm:gap-4 border-b bg-card px-2 sm:px-6">
       {isMobile && (
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleSidebar}
-          className="mr-2"
+          className="shrink-0"
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="sr-only">Toggle Menu</span>
         </Button>
       )}
-      <div className="flex flex-1 items-center gap-2">
-        <h1 className="text-base sm:text-lg font-semibold truncate">
+      <div className="flex flex-1 items-center gap-1 sm:gap-2 overflow-hidden">
+        <h1 className="text-sm sm:text-lg font-semibold truncate">
           {isMobile ? "Traffic Dashboard" : "Smart Traffic Management Dashboard"}
         </h1>
       </div>
@@ -40,23 +41,25 @@ export function DashboardHeader() {
       <Button
         variant="outline"
         size="icon"
-        className="relative"
+        className="relative h-8 w-8 sm:h-9 sm:w-9"
       >
         <Bell className="h-4 w-4" />
-        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-traffic-amber text-[10px] text-white">
+        <span className="absolute -right-1 -top-1 flex h-3 w-3 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-traffic-amber text-[10px] text-white">
           2
         </span>
       </Button>
       
-      <Button
-        variant="ghost"
-        size="sm"
-        className="hidden sm:flex"
-      >
-        <Sun className="mr-2 h-4 w-4" />
-        Light
-        <ChevronDown className="ml-2 h-4 w-4" />
-      </Button>
+      {!isMobile && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hidden sm:flex"
+        >
+          <Sun className="mr-2 h-4 w-4" />
+          Light
+          <ChevronDown className="ml-2 h-4 w-4" />
+        </Button>
+      )}
     </header>
   );
 }
