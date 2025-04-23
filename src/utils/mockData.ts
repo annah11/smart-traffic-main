@@ -1,4 +1,3 @@
-
 import { TrafficLight, TrafficCamera, SystemStatusItem } from "./types";
 
 // Mock data for the traffic management system
@@ -43,37 +42,37 @@ export const congestionData = [
 export const trafficCameraData = [
   {
     id: "cam-001",
-    title: "Main & 5th Intersection",
-    location: "Downtown",
+    title: "Meskel Square",
+    location: "Addis Ababa",
     status: "active" as const,
-    imgUrl: "https://images.unsplash.com/photo-1664227879981-1359be8c6b73?q=80&w=2664&auto=format&fit=crop",
+    imgUrl: "https://images.unsplash.com/photo-1466442929976-97f336a657be",
     vehicleCount: 45,
     congestionLevel: "high" as const,
   },
   {
     id: "cam-002",
-    title: "Highway 101 North",
-    location: "North Entrance",
+    title: "Bole Road",
+    location: "Bole, Addis Ababa",
     status: "active" as const,
-    imgUrl: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2664&auto=format&fit=crop",
+    imgUrl: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb",
     vehicleCount: 32,
     congestionLevel: "medium" as const,
   },
   {
     id: "cam-003",
-    title: "West Bridge",
-    location: "River Crossing",
+    title: "Churchill Avenue",
+    location: "Addis Ababa",
     status: "warning" as const,
-    imgUrl: "https://images.unsplash.com/photo-1505433178243-53d00a7b0f86?q=80&w=2663&auto=format&fit=crop",
+    imgUrl: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
     vehicleCount: 18,
     congestionLevel: "low" as const,
   },
   {
     id: "cam-004",
-    title: "Shopping Center Exit",
-    location: "Mall Area",
+    title: "Unity Park",
+    location: "Addis Ababa",
     status: "error" as const,
-    imgUrl: "https://images.unsplash.com/photo-1506835676612-56664061aa9d?q=80&w=2664&auto=format&fit=crop",
+    imgUrl: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb",
   },
 ];
 

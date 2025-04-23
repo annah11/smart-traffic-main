@@ -15,14 +15,15 @@ export function TrafficMap({ className }: TrafficMapProps) {
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-1 sm:pb-2">
-        <CardTitle className="text-xs sm:text-sm font-medium">Traffic Density Map</CardTitle>
+        <CardTitle className="text-xs sm:text-sm font-medium">Addis Ababa Traffic Map</CardTitle>
       </CardHeader>
       <CardContent className="p-1">
         <div className="relative h-full w-full min-h-[180px] sm:min-h-[300px] bg-sidebar-accent rounded overflow-hidden">
           <div className="absolute inset-0">
             {/* This would be replaced with an actual map component in production */}
-            <div className="w-full h-full flex items-center justify-center">
-              <p className="text-muted-foreground text-xs sm:text-sm">Map visualization</p>
+            <div className="w-full h-full flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1466442929976-97f336a657be')] bg-cover bg-center">
+              <div className="absolute inset-0 bg-black/20" />
+              <p className="text-white text-xs sm:text-sm z-10">Ethiopia Traffic Map</p>
             </div>
             
             {/* Sample traffic hotspots - smaller on mobile */}
