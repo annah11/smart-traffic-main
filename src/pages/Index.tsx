@@ -50,9 +50,9 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={!isMobile}>
         <DashboardSidebar />
-        <div className={`flex-1 flex flex-col ${isMobile ? "" : "ml-[240px]"} transition-all duration-300`}>
+        <div className="flex-1 flex flex-col transition-all duration-300">
           <DashboardHeader />
           
           <div className="flex-1 p-3 sm:p-6 overflow-auto">
@@ -127,8 +127,8 @@ const Index = () => {
                   <TrafficLight
                     key={light.id}
                     {...light}
-                    onChangeMode={handleChangeLightMode}
-                    onChangeLight={handleChangeLight}
+                    onChangeMode={(mode) => handleChangeLightMode(light.id, mode)}
+                    onChangeLight={(color) => handleChangeLight(light.id, color)}
                   />
                 ))}
               </div>
@@ -138,6 +138,6 @@ const Index = () => {
       </SidebarProvider>
     </div>
   );
-};
+}
 
 export default Index;

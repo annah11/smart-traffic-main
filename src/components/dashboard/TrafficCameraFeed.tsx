@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { CameraStatus, CongestionLevel } from "@/utils/types";
+import { Camera, CameraOff } from "lucide-react";
 
 interface TrafficCameraFeedProps {
   id: string;
@@ -26,6 +27,13 @@ export function TrafficCameraFeed({
   congestionLevel,
   className
 }: TrafficCameraFeedProps) {
+  const [imageLoaded, setImageLoaded] = useState(true);
+
+  const handleImageError = () => {
+    console.log(`Image failed to load for camera ${id}`);
+    setImageLoaded(false);
+  };
+
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -57,18 +65,28 @@ export function TrafficCameraFeed({
       </CardHeader>
       <CardContent className="p-0">
         <div className="relative aspect-video bg-muted">
-          <img
-            src={imgUrl}
-            alt={`Traffic camera ${id}`}
-            className="h-full w-full object-cover"
-          />
+          {imageLoaded ? (
+            <img
+              src={imgUrl}
+              alt={`Traffic camera ${id}`}
+              className="h-full w-full object-cover"
+              onError={handleImageError}
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-muted text-muted-foreground">
+              <div className="flex flex-col items-center gap-2">
+                <CameraOff className="h-8 w-8" />
+                <p className="text-xs">Feed unavailable</p>
+              </div>
+            </div>
+          )}
           <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
             {vehicleCount !== undefined && (
               <Badge variant="secondary" className="bg-black/50 text-white border-0">
                 {vehicleCount} vehicles
               </Badge>
             )}
-            {congestionLevel && (
+            {congestionLevel && imageLoaded && (
               <Badge
                 variant="secondary"
                 className={cn("border-0 text-white", {

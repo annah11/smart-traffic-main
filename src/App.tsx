@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { Navbar } from "./components/navigation/Navbar";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +15,6 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <BrowserRouter>
-          <Navbar />
           <main>
             <Routes>
               <Route path="/" element={<Index />} />

@@ -7,9 +7,11 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton
+  SidebarMenuButton,
+  SidebarTrigger
 } from "@/components/ui/sidebar";
 import { ChevronLeft } from "lucide-react";
 import { 
@@ -24,24 +26,31 @@ import {
   Bell,
   LogOut
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 export function DashboardSidebar() {
+  const location = useLocation();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
+  
+  // Helper to determine if a route is active
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <div className="flex items-center gap-2">
-          <div className="rounded-md bg-traffic-blue p-1">
-            <Camera className="h-5 w-5 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold">FlowVision</span>
-            <span className="text-xs text-muted-foreground">Traffic Control</span>
-          </div>
-          <button className="ml-auto h-8 w-8 rounded-md hover:bg-sidebar-accent flex items-center justify-center">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
+    <Sidebar variant="inset" collapsible="icon">
+      <SidebarHeader className="flex items-center gap-2">
+        <div className={cn("rounded-md p-1", isDarkMode ? "bg-blue-600" : "bg-blue-500")}>
+          <Camera className="h-5 w-5 text-white" />
         </div>
+        <div className="flex flex-col">
+          <span className="text-sm font-bold">FlowVision</span>
+          <span className="text-xs text-muted-foreground">Traffic Control</span>
+        </div>
+        <SidebarTrigger className="ml-auto" />
       </SidebarHeader>
       
       <SidebarContent>
@@ -49,40 +58,40 @@ export function DashboardSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/" className="flex items-center" data-active={true}>
+                <SidebarMenuButton asChild tooltip="Dashboard">
+                  <Link to="/" data-active={isActive("/")}>
                     <Home className="h-4 w-4 mr-2" />
                     Dashboard
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/map" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="Traffic Map">
+                  <Link to="/map" data-active={isActive("/map")}>
                     <Map className="h-4 w-4 mr-2" />
                     Traffic Map
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/cameras" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="Camera Feeds">
+                  <Link to="/cameras" data-active={isActive("/cameras")}>
                     <Camera className="h-4 w-4 mr-2" />
                     Camera Feeds
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/analytics" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="Analytics">
+                  <Link to="/analytics" data-active={isActive("/analytics")}>
                     <BarChart3 className="h-4 w-4 mr-2" />
                     Analytics
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/alerts" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="Alerts">
+                  <Link to="/alerts" data-active={isActive("/alerts")}>
                     <AlertTriangle className="h-4 w-4 mr-2" />
                     Alerts
                   </Link>
@@ -93,30 +102,28 @@ export function DashboardSidebar() {
         </SidebarGroup>
         
         <SidebarGroup>
-          <div className="sidebar-group-label mb-2">
-            <span className="flex-1 text-xs font-medium uppercase text-sidebar-foreground/70">SYSTEM</span>
-          </div>
+          <SidebarGroupLabel>SYSTEM</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/system-status" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="System Status">
+                  <Link to="/system-status" data-active={isActive("/system-status")}>
                     <Activity className="h-4 w-4 mr-2" />
                     System Status
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/devices" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="IoT Devices">
+                  <Link to="/devices" data-active={isActive("/devices")}>
                     <HardDrive className="h-4 w-4 mr-2" />
                     IoT Devices
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/settings" className="flex items-center">
+                <SidebarMenuButton asChild tooltip="Settings">
+                  <Link to="/settings" data-active={isActive("/settings")}>
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
                   </Link>
