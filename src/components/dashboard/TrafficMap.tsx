@@ -1,8 +1,11 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { MapPin } from "lucide-react";
+import { MapPin, Navigation } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TrafficMapProps {
@@ -11,7 +14,53 @@ interface TrafficMapProps {
 
 export function TrafficMap({ className }: TrafficMapProps) {
   const isMobile = useIsMobile();
-  
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    // Initialize map - Replace with your Mapbox token
+    mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/dark-v11',
+      center: [38.7578, 9.0252], // Addis Ababa coordinates
+      zoom: 12,
+      pitch: 45,
+    });
+
+    // Add navigation control
+    map.current.addControl(
+      new mapboxgl.NavigationControl(),
+      'top-right'
+    );
+
+    // Add traffic markers
+    const addMarker = (lat: number, lng: number, color: string) => {
+      const marker = document.createElement('div');
+      marker.className = `${color} text-white rounded-full p-1`;
+      
+      const icon = document.createElement('div');
+      icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+      marker.appendChild(icon);
+
+      new mapboxgl.Marker({ element: marker })
+        .setLngLat([lng, lat])
+        .addTo(map.current!);
+    };
+
+    // Add sample markers for different traffic conditions
+    addMarker(9.0252, 38.7578, 'bg-traffic-red'); // Meskel Square
+    addMarker(9.0300, 38.7900, 'bg-traffic-amber'); // Bole Road
+    addMarker(9.0150, 38.7400, 'bg-traffic-green'); // Churchill Avenue
+
+    return () => {
+      map.current?.remove();
+    };
+  }, []);
+
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-1 sm:pb-2">
@@ -19,33 +68,27 @@ export function TrafficMap({ className }: TrafficMapProps) {
       </CardHeader>
       <CardContent className="p-1">
         <div className="relative h-full w-full min-h-[180px] sm:min-h-[300px] bg-sidebar-accent rounded overflow-hidden">
-          <div className="absolute inset-0">
-            {/* This would be replaced with an actual map component in production */}
-            <div className="w-full h-full flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1466442929976-97f336a657be')] bg-cover bg-center">
-              <div className="absolute inset-0 bg-black/20" />
-              <p className="text-white text-xs sm:text-sm z-10">Ethiopia Traffic Map</p>
-            </div>
-            
-            {/* Sample traffic hotspots - smaller on mobile */}
-            <div className="absolute top-1/4 left-1/4 h-4 w-4 sm:h-8 sm:w-8 rounded-full bg-traffic-red/30 animate-pulse"></div>
-            <div className="absolute top-1/2 left-1/2 h-5 w-5 sm:h-10 sm:w-10 rounded-full bg-traffic-amber/30 animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 h-3 w-3 sm:h-6 sm:w-6 rounded-full bg-traffic-green/30 animate-pulse"></div>
-            
-            {/* Sample traffic light markers - smaller on mobile */}
-            <div className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="bg-traffic-red text-white rounded-full p-0.5 sm:p-1">
-                <MapPin className="h-2.5 w-2.5 sm:h-4 sm:w-4" />
+          <div ref={mapContainer} className="absolute inset-0" />
+          
+          {/* Legend */}
+          <div className="absolute bottom-4 left-4 bg-background/90 p-2 rounded-lg shadow-lg text-xs">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="bg-traffic-red text-white rounded-full p-0.5">
+                <MapPin className="h-3 w-3" />
               </div>
+              <span>Heavy Traffic</span>
             </div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="bg-traffic-amber text-white rounded-full p-0.5 sm:p-1">
-                <MapPin className="h-2.5 w-2.5 sm:h-4 sm:w-4" />
+            <div className="flex items-center gap-2 mb-1">
+              <div className="bg-traffic-amber text-white rounded-full p-0.5">
+                <MapPin className="h-3 w-3" />
               </div>
+              <span>Moderate Traffic</span>
             </div>
-            <div className="absolute bottom-1/4 right-1/4 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="bg-traffic-green text-white rounded-full p-0.5 sm:p-1">
-                <MapPin className="h-2.5 w-2.5 sm:h-4 sm:w-4" />
+            <div className="flex items-center gap-2">
+              <div className="bg-traffic-green text-white rounded-full p-0.5">
+                <MapPin className="h-3 w-3" />
               </div>
+              <span>Light Traffic</span>
             </div>
           </div>
         </div>
