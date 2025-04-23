@@ -21,7 +21,7 @@ export function TrafficMap({ className }: TrafficMapProps) {
     if (!mapContainer.current) return;
 
     // Initialize map - Replace with your Mapbox token
-    mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaGFubml0aSIsImEiOiJjbTl1YnRjNnUwNzV1MnFzNjQzcGNweWM5In0.pbabLzUCTjQIyBneR3Xxuw';
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
