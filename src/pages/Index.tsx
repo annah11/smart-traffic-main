@@ -127,8 +127,8 @@ const Index = () => {
                   <TrafficLight
                     key={light.id}
                     {...light}
-                    onChangeMode={(mode) => handleChangeLightMode(light.id, mode)}
-                    onChangeLight={(color) => handleChangeLight(light.id, color)}
+                    onChangeMode={(mode: TrafficLightMode) => handleChangeLightMode(light.id, mode)}
+                    onChangeLight={(color: TrafficLightColor) => handleChangeLight(light.id, color)}
                   />
                 ))}
               </div>
