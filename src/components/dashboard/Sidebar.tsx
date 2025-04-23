@@ -11,34 +11,40 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger
+  SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
-import { ChevronLeft } from "lucide-react";
-import { 
-  BarChart3, 
-  Camera, 
-  Settings, 
-  Home, 
-  Map, 
-  AlertTriangle,
-  Activity,
-  HardDrive,
-  Bell,
-  LogOut
-} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { 
+  Home, 
+  Map, 
+  Camera, 
+  BarChart3, 
+  AlertTriangle,
+  Activity,
+  HardDrive,
+  Settings,
+  User,
+  LogOut
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function DashboardSidebar() {
   const location = useLocation();
   const { theme } = useTheme();
+  const { state } = useSidebar();
   const isDarkMode = theme === 'dark';
   
-  // Helper to determine if a route is active
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -135,19 +141,44 @@ export function DashboardSidebar() {
       </SidebarContent>
       
       <SidebarFooter>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-              <span className="text-xs font-medium">AT</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">Admin</span>
-              <span className="text-xs text-muted-foreground">Traffic Control</span>
+        <div className="flex items-center justify-between p-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-muted">AT</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">Admin</span>
+                    <span className="text-xs text-muted-foreground">Traffic Control</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className={cn("flex flex-col min-w-0", 
+              state === "collapsed" ? "hidden" : "block"
+            )}>
+              <span className="text-sm font-medium truncate">Admin</span>
+              <span className="text-xs text-muted-foreground truncate">Traffic Control</span>
             </div>
           </div>
-          <button className="h-8 w-8 rounded-md hover:bg-muted flex items-center justify-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-8 w-8 rounded-md hover:bg-muted",
+              state === "collapsed" ? "ml-0" : "ml-auto"
+            )}
+          >
             <LogOut className="h-4 w-4" />
-          </button>
+            <span className="sr-only">Log out</span>
+          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>
