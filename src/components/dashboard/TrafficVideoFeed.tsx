@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Camera, Video, VideoOff } from "lucide-react";
+import { Camera, Video, VideoOff, Pause, Play } from "lucide-react";
 import { CameraStatus } from "@/utils/types";
 
 interface TrafficVideoFeedProps {
@@ -22,26 +22,29 @@ export function TrafficVideoFeed({
   className
 }: TrafficVideoFeedProps) {
   const [isPlaying, setIsPlaying] = useState(true);
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const frames = [
-    'https://placehold.co/600x400/232323/e6e6e6.png?text=Traffic+Feed+1',
-    'https://placehold.co/600x400/232323/e6e6e6.png?text=Traffic+Feed+2',
-    'https://placehold.co/600x400/232323/e6e6e6.png?text=Traffic+Feed+3'
-  ];
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  // Mock video sources - these are free stock videos that loop well for traffic scenes
+  const videoSources = {
+    'video-1': 'https://assets.mixkit.co/videos/preview/mixkit-traffic-in-the-city-during-the-evening-34449-large.mp4',
+    'video-2': 'https://assets.mixkit.co/videos/preview/mixkit-top-aerial-shot-of-seashore-with-rocks-1090-large.mp4'
+  };
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (isPlaying && status === 'active') {
-      intervalId = setInterval(() => {
-        setCurrentFrame((prev) => (prev + 1) % frames.length);
-      }, 1000);
+    if (videoRef.current) {
+      if (isPlaying && status === 'active') {
+        videoRef.current.play().catch(error => {
+          console.error("Video playback failed:", error);
+        });
+      } else {
+        videoRef.current.pause();
+      }
     }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
   }, [isPlaying, status]);
+
+  const togglePlayback = () => {
+    setIsPlaying(prev => !prev);
+  };
 
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -76,19 +79,25 @@ export function TrafficVideoFeed({
         <div className="relative aspect-video bg-muted">
           {status === "active" ? (
             <>
-              <img
-                src={frames[currentFrame]}
-                alt={`Traffic video feed ${id}`}
+              <video
+                ref={videoRef}
                 className="h-full w-full object-cover"
-              />
+                muted
+                loop
+                playsInline
+                autoPlay={isPlaying}
+              >
+                <source src={videoSources[id as keyof typeof videoSources] || videoSources['video-1']} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
               <button
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={togglePlayback}
                 className="absolute bottom-2 right-2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
               >
                 {isPlaying ? (
-                  <Video className="h-4 w-4" />
+                  <Pause className="h-4 w-4" />
                 ) : (
-                  <VideoOff className="h-4 w-4" />
+                  <Play className="h-4 w-4" />
                 )}
               </button>
             </>
