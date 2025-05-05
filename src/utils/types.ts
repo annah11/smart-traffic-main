@@ -1,4 +1,3 @@
-
 // Type definitions for the traffic management system components
 
 export type TrafficLightMode = "auto" | "manual" | "emergency";
