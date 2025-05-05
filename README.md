@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# Smart Traffic Control System
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/a0b6ce33-1100-4969-85b2-bb1b23ff48bd
+This is an integrated team project focused on developing an intelligent traffic management system using modern web technologies.
 
 ## How can I edit this code?
 
-There are several ways of editing your application.
+You can work on this project using several methods depending on your workflow preference.
 
-**Use Lovable**
+### 1. Use your preferred IDE locally
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a0b6ce33-1100-4969-85b2-bb1b23ff48bd) and start prompting.
+If you want to work locally using your own development environment:
 
-Changes made via Lovable will be committed automatically to this repo.
+#### Prerequisites
 
-**Use your preferred IDE**
+Make sure you have **Node.js** and **npm** installed. It’s recommended to use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for version management.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+#### Steps:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository using your Git URL
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Step 2: Navigate to the project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Step 3: Install the necessary dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 2. Edit files directly in GitHub
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+* Navigate to the specific file you want to change.
+* Click the **pencil icon** to edit it.
+* Commit the changes to the repository.
 
-**Use GitHub Codespaces**
+### 3. Use GitHub Codespaces (optional)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+* Go to the repository main page.
+* Click **Code** → **Codespaces** → **New codespace**.
+* This launches an in-browser development environment with all tools pre-configured.
 
-## What technologies are used for this project?
+## Technologies Used
 
-This project is built with:
+This project is built using the following stack:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+* [Vite](https://vitejs.dev/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [React](https://react.dev/)
+* [shadcn/ui](https://ui.shadcn.com/)
+* [Tailwind CSS](https://tailwindcss.com/)
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/a0b6ce33-1100-4969-85b2-bb1b23ff48bd) and click on Share -> Publish.
+You can deploy this project using any static site hosting platform (e.g., Vercel, Netlify, GitHub Pages). Follow the platform's documentation for steps on connecting a GitHub repo and deploying your Vite/React app.
 
-## Can I connect a custom domain to my Lovable project?
+## Custom Domain (Optional)
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Most hosting platforms allow you to connect a custom domain. Consult the platform’s documentation for step-by-step domain connection guides.
