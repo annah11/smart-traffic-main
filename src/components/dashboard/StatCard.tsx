@@ -1,11 +1,11 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { getStatCardData } from "@/lib/statCardData";
 
 interface StatCardProps {
+  id: string;
   title: string;
-  value: string | number;
   description?: string;
   icon?: React.ReactNode;
   trend?: {
@@ -15,14 +15,27 @@ interface StatCardProps {
   className?: string;
 }
 
-export function StatCard({ 
-  title, 
-  value, 
-  description, 
-  icon, 
+export function StatCard({
+  id,
+  title,
+  description,
+  icon,
   trend,
-  className 
+  className
 }: StatCardProps) {
+  const [value, setValue] = useState<string | number | null>(null);
+
+  useEffect(() => {
+    getStatCardData(id, (data) => {
+      setValue(data);
+    });
+
+    // Cleanup function (optional, but good practice)
+    return () => {
+      // Any cleanup logic here (e.g., unsubscribe from Firebase)
+    };
+  }, [id]);
+
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -30,7 +43,7 @@ export function StatCard({
         {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold">{value !== null ? value : "Loading..."}</div>
         {trend && (
           <p className="flex items-center text-xs text-muted-foreground">
             <span
