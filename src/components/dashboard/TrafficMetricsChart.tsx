@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -16,28 +15,54 @@ import {
   ResponsiveContainer,
   Legend
 } from "recharts";
+import { getTrafficData, TrafficData } from "@/lib/trafficData"; // Corrected import path
 
 interface TrafficMetricsChartProps {
   title: string;
   type: "line" | "bar";
-  data: Array<Record<string, any>>;
   className?: string;
   aspectRatio?: number;
+}
+
+interface ChartDataPoint {
+  name: string; 
+  value: number;
+  average?: number; 
 }
 
 export function TrafficMetricsChart({
   title,
   type,
-  data,
   className,
   aspectRatio = 2
 }: TrafficMetricsChartProps) {
   const isMobile = useIsMobile();
-  
+  const [trafficData, setTrafficData] = useState<{[key: string]: TrafficData} | null>(null);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+
+  useEffect(() => {
+    getTrafficData((data) => {
+      setTrafficData(data);
+    });
+  }, []);
+
+  // Transform Firebase data into chart data
+  useEffect(() => {
+    if (trafficData) {
+      const transformedData: ChartDataPoint[] = Object.entries(trafficData).map(
+        ([key, value]) => ({
+          name: `Frame ${value.frame}`, // Customize the name as needed
+          value: value.lane_counts.reduce((sum, count) => sum + count, 0), // Sum of lane counts
+        })
+      );
+      setChartData(transformedData);
+    }
+  }, [trafficData]);
+
   // Limit data points on mobile to avoid crowding
-  const displayData = isMobile && data.length > 8 
-    ? data.filter((_, index) => index % 2 === 0) 
-    : data;
+  const displayData = isMobile && chartData.length > 8 
+    ? chartData.filter((_, index) => index % 2 === 0) 
+    : chartData;
   
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -92,14 +117,14 @@ export function TrafficMetricsChart({
                   dot={false}
                   activeDot={{ r: isMobile ? 3 : 4 }}
                 />
-                <Line
+                {/*<Line // Example of an optional average line
                   type="monotone"
                   dataKey="average"
                   stroke="#13C2C2"
                   strokeWidth={isMobile ? 1.5 : 2}
                   strokeDasharray="5 5"
                   dot={false}
-                />
+                />*/}
               </LineChart>
             ) : (
               <BarChart
