@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -8,8 +8,16 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { toast } from "@/hooks/use-toast";
 
 const Auth = () => {
-  const [activeTab, setActiveTab] = useState<string>("login");
   const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<string>("login");
+  
+  // Check if there's a tab specified in the location state
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   // This function will be passed to child components to handle successful auth
   const handleAuthSuccess = (action: "login" | "register") => {
