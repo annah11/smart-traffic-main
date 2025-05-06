@@ -46,13 +46,13 @@
   }
 
   .light {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 220 14% 90%;
+    --foreground: 222.2 20.2% 16.3%;
 
-    --card: 0 0% 100%;
+    --card: 220 14% 96%;
     --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 0 0% 100%;
+    --popover: 220 14% 96%;
     --popover-foreground: 222.2 84% 4.9%;
 
     --primary: 217.2 91.2% 59.8%;

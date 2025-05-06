@@ -32,32 +32,38 @@ npm install
 npm run dev
 ```
 
-### 2. Edit files directly in GitHub
+**Edit a file directly in GitHub**
 
-* Navigate to the specific file you want to change.
-* Click the **pencil icon** to edit it.
-* Commit the changes to the repository.
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-### 3. Use GitHub Codespaces (optional)
+**Use GitHub Codespaces**
 
-* Go to the repository main page.
-* Click **Code** → **Codespaces** → **New codespace**.
-* This launches an in-browser development environment with all tools pre-configured.
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
 ## Technologies Used
 
-This project is built using the following stack:
+This project is built with:
 
-* [Vite](https://vitejs.dev/)
-* [TypeScript](https://www.typescriptlang.org/)
-* [React](https://react.dev/)
-* [shadcn/ui](https://ui.shadcn.com/)
-* [Tailwind CSS](https://tailwindcss.com/)
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-## Deployment
+## How can I deploy this project?
 
-You can deploy this project using any static site hosting platform (e.g., Vercel, Netlify, GitHub Pages). Follow the platform's documentation for steps on connecting a GitHub repo and deploying your Vite/React app.
+Simply open [Lovable](https://lovable.dev/projects/a0b6ce33-1100-4969-85b2-bb1b23ff48bd) and click on Share -> Publish.
 
-## Custom Domain (Optional)
+## Can I connect a custom domain to my Lovable project?
 
-Most hosting platforms allow you to connect a custom domain. Consult the platform’s documentation for step-by-step domain connection guides.
+Yes, you can!
+
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
