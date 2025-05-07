@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge"; // Correct import
+import { Badge } from "@/components/ui/badge"; 
 import { cn } from "@/lib/utils";
 import { Settings, Clock } from "lucide-react";
 import { TrafficLightMode, TrafficLightColor, TrafficLightStatus, type TrafficLight } from "@/utils/types"; // Adjust path
@@ -60,12 +60,11 @@ export function TrafficLight({
     }
   }, [trafficLightData, localTimeLeft, id]);
 
-  // Update local time when trafficLightData.timeLeft changes
   useEffect(() => {
     if (trafficLightData && trafficLightData.timeLeft !== undefined) {
       setLocalTimeLeft(trafficLightData.timeLeft);
     }
-  }, [trafficLightData?.timeLeft]);
+  }, [trafficLightData]);
 
   const handleModeChange = (mode: TrafficLightMode) => {
     updateTrafficLightMode(id, mode);
