@@ -19,7 +19,7 @@ export const updateTrafficLightMode = (
   mode: TrafficLightMode
 ) => {
   const trafficLightRef = ref(db, `traffic_lights/${id}/mode`);
-  return set(trafficLightRef, mode); // Return the promise
+  return set(trafficLightRef, mode); 
 };
 
 export const updateTrafficLightLight = (
@@ -27,7 +27,7 @@ export const updateTrafficLightLight = (
   light: TrafficLightColor
 ) => {
   const trafficLightRef = ref(db, `traffic_lights/${id}/currentLight`);
-  return set(trafficLightRef, light); // Return the promise
+  return set(trafficLightRef, light); 
 };
 
 export const updateTrafficLightTimeLeft = (
