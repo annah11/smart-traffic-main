@@ -16,6 +16,7 @@ import React from "react";
 // Optional: Scroll to top on route change
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
