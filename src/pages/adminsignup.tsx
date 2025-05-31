@@ -1,25 +1,27 @@
+// src/pages/adminsignup.tsx
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
-const AdminLogin: React.FC = () => {
+const AdminSignup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === "admin@smart.gov" && password === "admin123") {
-      navigate("/admin/dashboard");
-    } else {
-      alert("Sorry, you don’t have access.");
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
     }
-  };
 
-  const handleSignupRedirect = () => {
-    navigate("/adminsignup");
+    // Placeholder: Save admin account or integrate with backend
+    alert("Account created successfully!");
+    navigate("/adminlogin");
   };
 
   return (
@@ -39,11 +41,11 @@ const AdminLogin: React.FC = () => {
             className="w-20 h-20 object-cover mb-2"
           />
           <h1 className="text-white text-2xl font-semibold">
-            Admin Control Panel
+            Admin Registration
           </h1>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleSignup} className="space-y-6">
           <div className="flex flex-col">
             <label className="text-gray-300 text-sm mb-1">Admin Email</label>
             <input
@@ -67,47 +69,53 @@ const AdminLogin: React.FC = () => {
                 className="w-full h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 text-sm"
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
             </div>
           </div>
+
+          <div className="flex flex-col">
+            <label className="text-gray-300 text-sm mb-1">Confirm Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-blue-400 hover:underline text-sm"
+          >
+            {showPassword ? "Hide Passwords" : "Show Passwords"}
+          </button>
 
           <button
             type="submit"
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
           >
-            Sign in as Admin
+            Create Admin Account
           </button>
         </form>
 
         <div className="mt-4 text-center text-sm">
-          <p className="text-gray-400">Not registered?</p>
+          <p className="text-gray-400">Already registered?</p>
           <button
-            onClick={() => alert("Redirect to admin registration or contact IT")}
+            onClick={() => navigate("/adminlogin")}
             className="text-blue-400 hover:underline"
           >
-            Sign up with Google
-          </button>
-          <br />
-          <button
-            onClick={handleSignupRedirect}
-            className="text-blue-400 hover:underline mt-2"
-          >
-            Sign up
+            Go to Login
           </button>
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-4">
-          Admin Panel • Ethiopian Traffic Agency
+          Ethiopian Traffic Agency
         </p>
       </div>
     </div>
   );
 };
 
-export default AdminLogin;
+export default AdminSignup;

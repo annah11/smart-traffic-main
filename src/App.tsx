@@ -6,11 +6,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 
+// Pages
 import Index from "./pages/Index";
 import Login from "./pages/login";
 import AdminLogin from "./pages/adminlogin";
+import AdminSignup from "./pages/adminsignup"; // ✅ NEW
 import NotFound from "./pages/NotFound";
 
+// Create React Query client
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -23,6 +26,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/adminlogin" element={<AdminLogin />} />
+              <Route path="/adminsignup" element={<AdminSignup />} /> {/* ✅ NEW */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
