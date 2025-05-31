@@ -5,9 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 
-import Index from "./pages/Index";
+import Login from "./pages/login";       // ✅ Login page
+import Index from "./pages/Index";       // ✅ Dashboard
 import NotFound from "./pages/NotFound";
-import Login from "./pages/login"; // ✅ Import login page
 
 const queryClient = new QueryClient();
 
@@ -18,11 +18,11 @@ const App = () => (
         <BrowserRouter>
           <main>
             <Routes>
-              {/* ✅ Added login route */}
-              <Route path="/login" element={<Login />} />
+              {/* ✅ Show login page at root */}
+              <Route path="/" element={<Login />} />
 
-              {/* Home route */}
-              <Route path="/" element={<Index />} />
+              {/* ✅ You can still access dashboard at /dashboard */}
+              <Route path="/dashboard" element={<Index />} />
 
               {/* 404 fallback */}
               <Route path="*" element={<NotFound />} />

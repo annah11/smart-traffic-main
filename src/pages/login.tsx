@@ -12,8 +12,11 @@ const Login: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // fake login success
     navigate("/dashboard");
+  };
+
+  const handleGoogleLogin = () => {
+    alert("Google Sign-In not yet connected.");
   };
 
   return (
@@ -36,6 +39,7 @@ const Login: React.FC = () => {
             Smart Traffic Control
           </h1>
         </div>
+
         <form onSubmit={handleLogin} className="space-y-6 flex-1">
           <div className="flex flex-col">
             <label className="text-gray-300 text-sm mb-1">
@@ -50,6 +54,7 @@ const Login: React.FC = () => {
               required
             />
           </div>
+
           <div className="flex flex-col">
             <label className="text-gray-300 text-sm mb-1">Password</label>
             <div className="relative">
@@ -70,6 +75,7 @@ const Login: React.FC = () => {
               </button>
             </div>
           </div>
+
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center space-x-2 text-gray-300">
               <input
@@ -83,11 +89,13 @@ const Login: React.FC = () => {
             <button
               type="button"
               className="text-blue-500 hover:underline"
-              onClick={() => alert("Redirect to reset flow")}
+              onClick={() => alert("Redirect to reset password flow")}
             >
               Forgot password?
             </button>
           </div>
+
+          {/* Main Sign In button */}
           <button
             type="submit"
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
@@ -95,7 +103,23 @@ const Login: React.FC = () => {
             Sign In
           </button>
         </form>
-        <p className="text-center text-gray-500 text-xs mt-8">
+
+        {/* Matching Google Sign-In button with black icon */}
+        <div className="mt-4">
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition flex items-center justify-center"
+          >
+            <img
+              src="https://img.icons8.com/ios-filled/50/000000/google-logo.png"
+              alt="Google"
+              className="w-5 h-5 mr-2"
+            />
+            Sign in with Google
+          </button>
+        </div>
+
+        <p className="text-center text-gray-500 text-xs mt-4">
           Powered by Ethiopian Traffic Agency
         </p>
       </div>
