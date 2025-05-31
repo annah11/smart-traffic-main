@@ -1,162 +1,123 @@
 import React, { useState } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { DashboardSidebar } from "@/components/dashboard/Sidebar";
-import { DashboardHeader } from "@/components/dashboard/Header";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { TrafficCameraFeed } from "@/components/dashboard/TrafficCameraFeed";
-import { TrafficLight } from "@/components/dashboard/TrafficLight";
-import { TrafficMap } from "@/components/dashboard/TrafficMap";
-import { TrafficMetricsChart } from "@/components/dashboard/TrafficMetricsChart";
-import { SystemStatusCard } from "@/components/dashboard/SystemStatusCard";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  Car, 
-  AlertTriangle, 
-  Clock, 
-  Activity,
-  Camera,
-  Gauge
-} from "lucide-react";
-import { TrafficLightMode, TrafficLightColor, TrafficLight as TrafficLightType } from "@/utils/types";
+import { useNavigate } from "react-router-dom";
+import lightImage from "@/images/light.jpg";
+import backgroundImage from "@/images/background.png";
 
-import { 
-  trafficVolumeData, 
-  congestionData, 
-  trafficCameraData, 
-  trafficLightData, 
-  systemStatusData 
-} from "@/utils/mockData";
+const Login: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+  const navigate = useNavigate();
 
-import { TrafficVideoFeed } from "@/components/dashboard/TrafficVideoFeed";
-
-const Index = () => {
-  const [trafficLights, setTrafficLights] = useState<TrafficLightType[]>(trafficLightData);
-  const isMobile = useIsMobile();
-
-  const handleChangeLightMode = (id: string, mode: TrafficLightMode) => {
-    setTrafficLights(prev => 
-      prev.map(light => 
-        light.id === id ? { ...light, mode } : light
-      )
-    );
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate("/dashboard"); // For regular users
   };
 
-  const handleChangeLight = (id: string, currentLight: TrafficLightColor) => {
-    setTrafficLights(prev => 
-      prev.map(light => 
-        light.id === id ? { ...light, currentLight } : light
-      )
-    );
+  const handleAdminLogin = () => {
+    navigate("/adminlogin"); // Now navigates to admin login page
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      <SidebarProvider defaultOpen={!isMobile}>
-        <DashboardSidebar />
-        <div className="flex-1 flex flex-col transition-all duration-300">
-          <DashboardHeader />
-          
-          <div className="flex-1 p-3 sm:p-6 overflow-auto">
-            <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-3 sm:mb-6">
-              <StatCard
-                title="Total Traffic Volume"
-                value="25,429"
-                description="vehicles today"
-                icon={<Car />}
-                trend={{ value: "12%", isPositive: true }}
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="w-96 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col">
+        <div className="flex flex-col items-center justify-center mb-8">
+          <img
+            src={lightImage}
+            alt="Traffic Light"
+            className="w-20 h-20 object-cover mb-2"
+          />
+          <h1 className="text-white text-2xl font-semibold">
+            Smart Traffic Control
+          </h1>
+        </div>
+
+        <form onSubmit={handleLogin} className="space-y-6 flex-1">
+          <div className="flex flex-col">
+            <label className="text-gray-300 text-sm mb-1">
+              Email or Username
+            </label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-gray-300 text-sm mb-1">Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
-              <StatCard
-                title="Average Congestion"
-                value="68%"
-                description="across monitored zones"
-                icon={<Gauge />}
-                trend={{ value: "5%", isPositive: false }}
-              />
-              <StatCard
-                title="Incident Alerts"
-                value="7"
-                description="in the last 24 hours"
-                icon={<AlertTriangle />}
-                trend={{ value: "3", isPositive: false }}
-              />
-              <StatCard
-                title="Average Wait Time"
-                value="87s"
-                description="at major intersections"
-                icon={<Clock />}
-                trend={{ value: "14s", isPositive: true }}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-3 sm:mb-6">
-              <TrafficMap className="md:col-span-2" />
-              <SystemStatusCard items={systemStatusData} />
-            </div>
-            
-            <div className="mb-3 sm:mb-6">
-              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Traffic Analytics</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
-                <TrafficMetricsChart
-                  title="Traffic Volume (24 Hours)"
-                  type="line"
-                  data={trafficVolumeData}
-                />
-                <TrafficMetricsChart
-                  title="Congestion by Location"
-                  type="bar"
-                  data={congestionData}
-                />
-              </div>
-            </div>
-            
-            <div className="mb-3 sm:mb-6">
-              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Live Video Feeds</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
-                <TrafficVideoFeed
-                  id="video-1"
-                  title="Meskel Square Live Feed"
-                  location="Meskel Square, Addis Ababa"
-                  status="active"
-                />
-                <TrafficVideoFeed
-                  id="video-2"
-                  title="Bole Road Live Feed"
-                  location="Bole Road, Addis Ababa"
-                  status="active"
-                />
-              </div>
-            </div>
-            
-            <div className="mb-3 sm:mb-6">
-              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Live Camera Feeds</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                {trafficCameraData.map((camera) => (
-                  <TrafficCameraFeed
-                    key={camera.id}
-                    {...camera}
-                  />
-                ))}
-              </div>
-            </div>
-            
-            <div className="mb-3 sm:mb-6">
-              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Traffic Light Control</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                {trafficLights.map((light) => (
-                  <TrafficLight
-                    key={light.id}
-                    {...light}
-                    onChangeMode={(mode: TrafficLightMode) => handleChangeLightMode(light.id, mode)}
-                    onChangeLight={(color: TrafficLightColor) => handleChangeLight(light.id, color)}
-                  />
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 text-sm"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
           </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center space-x-2 text-gray-300">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-400"
+              />
+              <span>Remember me</span>
+            </label>
+            <button
+              type="button"
+              className="text-blue-500 hover:underline"
+              onClick={() => alert("Redirect to reset password flow")}
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <div className="mt-4">
+          <button
+            onClick={handleAdminLogin}
+            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition"
+          >
+            Login as Admin
+          </button>
         </div>
-      </SidebarProvider>
+
+        <p className="text-center text-gray-500 text-xs mt-4">
+          Powered by Ethiopian Traffic Agency
+        </p>
+      </div>
     </div>
   );
-}
+};
 
-export default Index;
+export default Login;

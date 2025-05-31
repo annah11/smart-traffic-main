@@ -3,20 +3,19 @@ import { useNavigate } from "react-router-dom";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
-const Login: React.FC = () => {
+const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
-  };
-
-  const handleAdminLogin = () => {
-    navigate("/adminlogin");
+    if (email === "admin@smart.gov" && password === "admin123") {
+      navigate("/admin/dashboard");
+    } else {
+      alert("Sorry, you don’t have access.");
+    }
   };
 
   return (
@@ -36,18 +35,16 @@ const Login: React.FC = () => {
             className="w-20 h-20 object-cover mb-2"
           />
           <h1 className="text-white text-2xl font-semibold">
-            Smart Traffic Control
+            Admin Control Panel
           </h1>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6 flex-1">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div className="flex flex-col">
-            <label className="text-gray-300 text-sm mb-1">
-              Email or Username
-            </label>
+            <label className="text-gray-300 text-sm mb-1">Admin Email</label>
             <input
               type="email"
-              placeholder="you@example.com"
+              placeholder="admin@smart.gov"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -76,48 +73,35 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center space-x-2 text-gray-300">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                className="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-400"
-              />
-              <span>Remember me</span>
-            </label>
-            <button
-              type="button"
-              className="text-blue-500 hover:underline"
-              onClick={() => alert("Redirect to reset password flow")}
-            >
-              Forgot password?
-            </button>
-          </div>
-
           <button
             type="submit"
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
           >
-            Sign In
+            Sign in as Admin
           </button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-4 text-center text-sm">
+          <p className="text-gray-400">Not registered?</p>
           <button
-            onClick={handleAdminLogin}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition"
+            onClick={() => alert("Redirect to admin registration or contact IT")}
+            className="text-blue-400 hover:underline"
           >
-            Login as Admin
+            Sign up with Google
+          </button>
+          <br/>
+          <button onClick={() => alert("Redirect to admin registration or contact IT")}
+            className="text-blue-400 hover:underline">
+            Sign up
           </button>
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-4">
-          Powered by Ethiopian Traffic Agency
+          Admin Panel • Ethiopian Traffic Agency
         </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin;
