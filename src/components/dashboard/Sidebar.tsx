@@ -102,6 +102,15 @@ export function DashboardSidebar() {
                     Alerts
                   </Link>
                 </SidebarMenuButton>
+                <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Admin Dashboard">
+                <Link to="/admindashboard" data-active={isActive("/admindashboard")}>
+                  <User className="h-4 w-4 mr-2" />
+                  Admin Dashboard
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
