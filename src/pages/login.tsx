@@ -12,6 +12,11 @@ const Login: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (email.trim() === "" || password.trim() === "") {
+      alert("Please enter both email and password.");
+      return;
+    }
+    alert("Login successful! Redirecting...");
     navigate("/dashboard");
   };
 
@@ -20,31 +25,20 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center" style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}>
       <div className="w-96 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col">
         <div className="flex flex-col items-center justify-center mb-8">
-          <img
-            src={lightImage}
-            alt="Traffic Light"
-            className="w-20 h-20 object-cover mb-2"
-          />
-          <h1 className="text-white text-2xl font-semibold">
-            Smart Traffic Control
-          </h1>
+          <img src={lightImage} alt="Traffic Light" className="w-20 h-20 object-cover mb-2" />
+          <h1 className="text-white text-2xl font-semibold">Smart Traffic Control</h1>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6 flex-1">
           <div className="flex flex-col">
-            <label className="text-gray-300 text-sm mb-1">
-              Email or Username
-            </label>
+            <label className="text-gray-300 text-sm mb-1">Email or Username</label>
             <input
               type="email"
               placeholder="you@example.com"
