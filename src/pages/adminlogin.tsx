@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase/config";
+
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
@@ -7,19 +11,34 @@ const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === "admin@smart.gov" && password === "admin123") {
-      navigate("/admin/dashboard");
-    } else {
-      alert("Sorry, you don’t have access.");
-    }
-  };
 
-  const handleSignupRedirect = () => {
-    navigate("/adminsignup");
+    try {
+      setLoading(true);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Check role from Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists() && userDoc.data().role === "admin") {
+        alert("Welcome Admin!");
+        navigate("/"); // ✅ Redirects to Index.tsx dashboard
+      } else {
+        alert("Access denied. Not an admin.");
+      }
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error("Login Error:", err.message);
+      alert(`Login failed: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -79,23 +98,17 @@ const AdminLogin: React.FC = () => {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
           >
-            Sign in as Admin
+            {loading ? "Signing in..." : "Sign in as Admin"}
           </button>
         </form>
 
         <div className="mt-4 text-center text-sm">
           <p className="text-gray-400">Not registered?</p>
           <button
-            onClick={() => alert("Redirect to admin registration or contact IT")}
-            className="text-blue-400 hover:underline"
-          >
-            Sign up with Google
-          </button>
-          <br />
-          <button
-            onClick={handleSignupRedirect}
+            onClick={() => navigate("/adminsignup")}
             className="text-blue-400 hover:underline mt-2"
           >
             Sign up
