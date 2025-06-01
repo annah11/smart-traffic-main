@@ -4,18 +4,35 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
 
-import lightImage from "../images/light.jpg";
-import backgroundImage from "../images/background.png";
-
-
+import lightImage from "@/images/light.jpg";
+import backgroundImage from "@/images/background.png";
 
 const AdminSignup: React.FC = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const isValidPassword = (pwd: string): boolean => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;"'<>,.?/~`\\|-]).{8,}$/;
+    return regex.test(pwd);
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (!isValidPassword(value)) {
+      setPasswordError(
+        "Password must be 8+ characters and include uppercase, lowercase, number, and special character."
+      );
+    } else {
+      setPasswordError("");
+    }
+  };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,21 +42,25 @@ const AdminSignup: React.FC = () => {
       return;
     }
 
+    if (!isValidPassword(password)) {
+      alert("Password does not meet the required criteria.");
+      return;
+    }
+
     try {
       setLoading(true);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log("✅ Firebase Auth created user:", user); // Add console log for verification
 
-      // Store admin data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
+        name: fullName,
         email: user.email,
         role: "admin",
-        createdAt: new Date()
+        createdAt: new Date(),
       });
 
-      alert("Admin account created successfully!");
+      alert("✅ Admin account created successfully!");
       navigate("/adminlogin");
     } catch (error: unknown) {
       const err = error as Error;
@@ -71,6 +92,18 @@ const AdminSignup: React.FC = () => {
 
         <form onSubmit={handleSignup} className="space-y-6">
           <div>
+            <label className="text-gray-300 text-sm mb-1 block">Full Name</label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Your Name"
+              required
+              className="w-full h-12 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
             <label className="text-gray-300 text-sm mb-1 block">Admin Email</label>
             <input
               type="email"
@@ -87,11 +120,14 @@ const AdminSignup: React.FC = () => {
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handlePasswordChange(e.target.value)}
               placeholder="••••••••"
               required
               className="w-full h-12 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {passwordError && (
+              <p className="text-red-400 text-xs mt-1">{passwordError}</p>
+            )}
           </div>
 
           <div>
@@ -102,17 +138,24 @@ const AdminSignup: React.FC = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full h-12 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={!isValidPassword(password)}
+              className={`w-full h-12 px-4 rounded-lg focus:outline-none ${
+                isValidPassword(password)
+                  ? "bg-gray-700 text-white focus:ring-2 focus:ring-blue-500"
+                  : "bg-gray-600 opacity-50 text-gray-300 cursor-not-allowed"
+              }`}
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="text-blue-400 hover:underline text-sm"
-          >
-            {showPassword ? "Hide Passwords" : "Show Passwords"}
-          </button>
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-sm text-yellow-300 underline hover:text-yellow-400 transition"
+            >
+              {showPassword ? "🙈 Hide Passwords" : "👁️ Show Passwords"}
+            </button>
+          </div>
 
           <button
             type="submit"

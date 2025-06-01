@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,6 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+
+// Toastify
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Pages
 import Index from "./pages/Index";
@@ -32,6 +35,8 @@ const App = () => (
               <Route path="/admindashboard" element={<AdminDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            {/* Toastify container for success/warning/error alerts */}
+            <ToastContainer position="top-center" autoClose={3000} />
           </main>
         </BrowserRouter>
         <Toaster />

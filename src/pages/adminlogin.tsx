@@ -1,3 +1,4 @@
+// src/pages/adminlogin.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -28,7 +29,7 @@ const AdminLogin: React.FC = () => {
 
       if (userDoc.exists() && userDoc.data().role === "admin") {
         alert("Welcome Admin!");
-        navigate("/"); // ✅ Redirects to Index.tsx dashboard
+        navigate("/dashboard");
       } else {
         alert("Access denied. Not an admin.");
       }
