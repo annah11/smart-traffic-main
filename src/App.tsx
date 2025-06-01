@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Login from "./pages/login";
 import AdminLogin from "./pages/adminlogin";
 import AdminSignup from "./pages/adminsignup";
+import AdminDashboard from "./pages/AdminDashboard"; // ✅ import this
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/dashboard" element={<Index />} />
               <Route path="/adminlogin" element={<AdminLogin />} />
               <Route path="/adminsignup" element={<AdminSignup />} />
+              <Route path="/admindashboard" element={<AdminDashboard />} /> {/* ✅ Admin route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
