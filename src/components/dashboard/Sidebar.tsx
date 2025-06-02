@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Sidebar,
@@ -14,14 +13,14 @@ import {
   SidebarTrigger,
   useSidebar
 } from "@/components/ui/sidebar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { 
-  Home, 
-  Map, 
-  Camera, 
-  BarChart3, 
+import {
+  Home,
+  Map,
+  Camera,
+  BarChart3,
   AlertTriangle,
   Activity,
   HardDrive,
@@ -29,22 +28,33 @@ import {
   User,
   LogOut
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getAuth, signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 
 export function DashboardSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const { state } = useSidebar();
-  const isDarkMode = theme === 'dark';
-  
+  const isDarkMode = theme === "dark";
+
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return;
+
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      toast.success("Logged out successfully");
+      navigate("/adminlogin");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
+    }
+  };
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -58,7 +68,7 @@ export function DashboardSidebar() {
         </div>
         <SidebarTrigger className="ml-auto" />
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -102,20 +112,19 @@ export function DashboardSidebar() {
                     Alerts
                   </Link>
                 </SidebarMenuButton>
-                <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Admin Dashboard">
-                <Link to="/admindashboard" data-active={isActive("/admindashboard")}>
-                  <User className="h-4 w-4 mr-2" />
-                  Admin Dashboard
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Admin Dashboard">
+                  <Link to="/admindashboard" data-active={isActive("/admindashboard")}>
+                    <User className="h-4 w-4 mr-2" />
+                    Admin Dashboard
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        
+
         <SidebarGroup>
           <SidebarGroupLabel>SYSTEM</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -148,47 +157,18 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
+
       <SidebarFooter>
-        <div className="flex items-center justify-between p-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-muted">AT</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem className="flex items-center">
-                  <User className="mr-2 h-4 w-4" />
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">Admin</span>
-                    <span className="text-xs text-muted-foreground">Traffic Control</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className={cn("flex flex-col min-w-0", 
-              state === "collapsed" ? "hidden" : "block"
-            )}>
-              <span className="text-sm font-medium truncate">Admin</span>
-              <span className="text-xs text-muted-foreground truncate">Traffic Control</span>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "h-8 w-8 rounded-md hover:bg-muted",
-              state === "collapsed" ? "ml-0" : "ml-auto"
-            )}
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="sr-only">Log out</span>
-          </Button>
-        </div>
+        <SidebarGroupContent className="w-full">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
+                <LogOut className="h-4 w-4 mr-2" />
+                Log Out
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
       </SidebarFooter>
     </Sidebar>
   );
