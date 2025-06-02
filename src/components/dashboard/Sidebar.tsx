@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import {
   Home,
   Map,
+  Camera,
   BarChart3,
   AlertTriangle,
   Activity,
@@ -97,7 +98,7 @@ export function DashboardSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Camera Feeds">
                   <Link to="/cameras" data-active={isActive("/cameras")}>
-                    <Map className="h-4 w-4 mr-2" />
+                    <Camera className="h-4 w-4 mr-2" />
                     Camera Feeds
                   </Link>
                 </SidebarMenuButton>

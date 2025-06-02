@@ -56,7 +56,7 @@ const AdminSignup: React.FC = () => {
         uid: user.uid,
         name: fullName,
         email: user.email,
-        role: "ADMIN",  // ✅ Uppercase role
+        role: "ADMIN",  // ✅ Enforced as uppercase ADMIN for consistency
         createdAt: new Date(),
       });
 

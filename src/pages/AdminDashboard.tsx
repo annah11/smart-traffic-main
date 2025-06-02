@@ -33,7 +33,7 @@ const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // Search state
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -194,7 +194,6 @@ const AdminDashboard: React.FC = () => {
           <h3 className="text-xl font-semibold">Registered Users</h3>
         </div>
 
-        {/* 🔍 Search Field */}
         <input
           type="text"
           placeholder="Search by name or email..."
