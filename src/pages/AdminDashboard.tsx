@@ -9,7 +9,7 @@ import {
   updateDoc,
   setDoc,
 } from "firebase/firestore";
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -33,6 +33,7 @@ const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Search state
 
   const fetchUsers = async () => {
     try {
@@ -192,6 +193,16 @@ const AdminDashboard: React.FC = () => {
           <Users className="text-green-400 w-5 h-5" />
           <h3 className="text-xl font-semibold">Registered Users</h3>
         </div>
+
+        {/* 🔍 Search Field */}
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full max-w-md h-10 mb-4 px-4 bg-[#334155] text-white rounded-md"
+        />
+
         <table className="w-full table-auto text-left text-sm text-gray-300">
           <thead className="border-b border-gray-700">
             <tr>
@@ -209,30 +220,35 @@ const AdminDashboard: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              users.map((user, idx) => (
-                <tr
-                  key={user.id || idx}
-                  className="border-b border-gray-700 hover:bg-[#334155]"
-                >
-                  <td className="py-2 px-4">{user.name}</td>
-                  <td className="py-2 px-4">{user.email}</td>
-                  <td className="py-2 px-4">{user.role}</td>
-                  <td className="py-2 px-4 text-center flex gap-2 justify-center">
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="text-yellow-400 hover:text-yellow-600"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="text-red-400 hover:text-red-600"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))
+              users
+                .filter((user) =>
+                  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((user, idx) => (
+                  <tr
+                    key={user.id || idx}
+                    className="border-b border-gray-700 hover:bg-[#334155]"
+                  >
+                    <td className="py-2 px-4">{user.name}</td>
+                    <td className="py-2 px-4">{user.email}</td>
+                    <td className="py-2 px-4">{user.role}</td>
+                    <td className="py-2 px-4 text-center flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleEdit(user)}
+                        className="text-yellow-400 hover:text-yellow-600"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="text-red-400 hover:text-red-600"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
             )}
           </tbody>
         </table>

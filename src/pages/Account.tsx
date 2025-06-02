@@ -6,8 +6,7 @@ import {
   query,
   where,
   getDocs,
-  updateDoc,
-  doc
+  updateDoc
 } from "firebase/firestore";
 import {
   getStorage,
@@ -24,10 +23,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
+// 🔁 Declare Firestore and Storage outside so ESLint won’t complain
+const db = getFirestore();
+const storage = getStorage();
+
 export default function AccountPage() {
   const auth = getAuth();
-  const db = getFirestore();
-  const storage = getStorage();
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const [user, setUser] = useState(auth.currentUser);
@@ -36,7 +37,7 @@ export default function AccountPage() {
   const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
   const [uploading, setUploading] = useState(false);
 
-  // Track auth state
+  // Track login state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -45,7 +46,7 @@ export default function AccountPage() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch role and creation time
+  // Load role and join time
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user?.email) return;
@@ -57,19 +58,21 @@ export default function AccountPage() {
           const data = snapshot.docs[0].data();
           setRole(data.role || "N/A");
           setCreatedAt(
-            new Date(user.metadata.creationTime || "").toLocaleString()
+            user.metadata.creationTime
+              ? new Date(user.metadata.creationTime).toLocaleString()
+              : "Unknown"
           );
         } else {
-          toast.warning("User data not found in Firestore.");
+          toast.warning("User info not found in Firestore.");
         }
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        console.error("Fetch error:", err);
         toast.error("Failed to load user data.");
       }
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user?.email, user?.metadata?.creationTime]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,10 +95,10 @@ export default function AccountPage() {
       }
 
       setPhotoURL(downloadURL);
-      toast.success("Profile picture updated!");
+      toast.success("Profile photo updated.");
     } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error("Upload failed");
+      console.error("Upload error:", error);
+      toast.error("Failed to upload.");
     } finally {
       setUploading(false);
     }

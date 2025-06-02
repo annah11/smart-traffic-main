@@ -1,3 +1,4 @@
+// src/pages/AdminLogin.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -134,17 +135,27 @@ const AdminLogin: React.FC = () => {
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm">
-          <p className="text-gray-400">Not registered?</p>
+        <div className="mt-6 text-center text-sm">
+          <p className="text-gray-400 mb-1">Not an admin?</p>
           <button
-            onClick={() => navigate("/adminsignup")}
-            className="text-blue-400 hover:underline mt-2"
+            onClick={() => navigate("/login")}
+            className="text-blue-400 hover:underline"
           >
-            Sign up
+            Go to Employee Login
           </button>
+
+          <div className="mt-4">
+            <p className="text-gray-400">New Admin?</p>
+            <button
+              onClick={() => navigate("/adminsignup")}
+              className="text-blue-400 hover:underline mt-1"
+            >
+              Sign up
+            </button>
+          </div>
         </div>
 
-        <p className="text-center text-gray-500 text-xs mt-4">
+        <p className="text-center text-gray-500 text-xs mt-6">
           Admin Panel • Ethiopian Traffic Agency
         </p>
       </div>
