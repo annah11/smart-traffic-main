@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getAuth, updateProfile, onAuthStateChanged } from "firebase/auth";
+import { getAuth, updateProfile, onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import {
   getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
+  doc,
+  getDoc,
   updateDoc
 } from "firebase/firestore";
 import {
@@ -23,56 +21,56 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
-// 🔁 Declare Firestore and Storage outside so ESLint won’t complain
-const db = getFirestore();
-const storage = getStorage();
-
 export default function AccountPage() {
-  const auth = getAuth();
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const [user, setUser] = useState(auth.currentUser);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
   const [role, setRole] = useState("N/A");
   const [createdAt, setCreatedAt] = useState("");
-  const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
+  const [photoURL, setPhotoURL] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  // Track login state
+  const auth = getAuth();
+  const db = getFirestore();
+  const storage = getStorage();
+
+  // Track auth state and update local states
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      if (u?.photoURL) setPhotoURL(u.photoURL);
+      if (u) {
+        setUser(u);
+        setPhotoURL(u.photoURL || "");
+        if (u.metadata.creationTime) {
+          setCreatedAt(new Date(u.metadata.creationTime).toLocaleString());
+        }
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
-  // Load role and join time
+  // Fetch role using UID from Firestore
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!user?.email) return;
+      if (!user?.uid) return;
 
       try {
-        const q = query(collection(db, "users"), where("email", "==", user.email));
-        const snapshot = await getDocs(q);
-        if (!snapshot.empty) {
-          const data = snapshot.docs[0].data();
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const data = userDocSnap.data();
           setRole(data.role || "N/A");
-          setCreatedAt(
-            user.metadata.creationTime
-              ? new Date(user.metadata.creationTime).toLocaleString()
-              : "Unknown"
-          );
         } else {
           toast.warning("User info not found in Firestore.");
         }
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("Error fetching user data:", err);
         toast.error("Failed to load user data.");
       }
     };
 
     fetchUserData();
-  }, [user?.email, user?.metadata?.creationTime]);
+  }, [db, user?.uid]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,19 +84,14 @@ export default function AccountPage() {
 
       await updateProfile(user, { photoURL: downloadURL });
 
-      const q = query(collection(db, "users"), where("email", "==", user.email));
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        await updateDoc(snapshot.docs[0].ref, {
-          photoURL: downloadURL
-        });
-      }
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, { photoURL: downloadURL });
 
       setPhotoURL(downloadURL);
-      toast.success("Profile photo updated.");
+      toast.success("Profile picture updated!");
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Failed to upload.");
+      console.error("Upload failed:", error);
+      toast.error("Upload failed");
     } finally {
       setUploading(false);
     }
