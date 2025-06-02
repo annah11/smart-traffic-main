@@ -3,45 +3,59 @@ import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const navigate = useNavigate();
+interface ProtectedAdminRouteProps {
+  children: JSX.Element;
+}
+
+const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) => {
+  const [authorized, setAuthorized] = useState(false);
+  const [checked, setChecked] = useState(false); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        navigate("/login");
         toast.error("Please log in first.");
+        setAuthorized(false);
+        setChecked(true);
         return;
       }
 
       try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        const role = userDoc.exists() ? userDoc.data().role : null;
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
 
-        if (role === "ADMIN") {
-          setIsAuthorized(true);
+        if (!userDoc.exists()) {
+          toast.error("User not found in Firestore.");
+          setAuthorized(false);
         } else {
-          toast.warning("Employee does not have access.");
-          navigate("/dashboard");
+          const role = (userDoc.data().role || "").toUpperCase();
+          if (role === "ADMIN") {
+            setAuthorized(true);
+          } else {
+            toast.warning("Employee does not have access.");
+            setAuthorized(false);
+          }
         }
       } catch (err) {
-        toast.error("Failed to verify role.");
-        navigate("/dashboard");
+        console.error("Error verifying role:", err);
+        toast.error("Error checking user role.");
+        setAuthorized(false);
       } finally {
-        setIsLoading(false);
+        setChecked(true);
       }
     });
 
     return () => unsubscribe();
-  }, [navigate]);
+  }, []);
 
-  if (isLoading) return null;
-  return <>{isAuthorized && children}</>;
+  if (!checked) return null;
+
+  if (!authorized) return <Navigate to="/dashboard" replace />;
+
+  return children;
 };
 
 export default ProtectedAdminRoute;

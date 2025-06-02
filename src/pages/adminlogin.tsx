@@ -1,38 +1,52 @@
-// src/pages/adminlogin.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
-
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedAdminEmail");
+    const savedPassword = localStorage.getItem("rememberedAdminPassword");
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       setLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Check role from Firestore
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists() && userDoc.data().role === "ADMIN") {
+        if (rememberMe) {
+          localStorage.setItem("rememberedAdminEmail", email);
+          localStorage.setItem("rememberedAdminPassword", password);
+        } else {
+          localStorage.removeItem("rememberedAdminEmail");
+          localStorage.removeItem("rememberedAdminPassword");
+        }
 
         alert("Welcome Admin!");
         navigate("/dashboard");
       } else {
-        alert("Access denied. Not an admin. or Incorrect credential");
+        alert("Access denied. Not an admin or incorrect credentials.");
       }
     } catch (error: unknown) {
       const err = error as Error;
@@ -54,14 +68,8 @@ const AdminLogin: React.FC = () => {
     >
       <div className="w-96 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col">
         <div className="flex flex-col items-center justify-center mb-8">
-          <img
-            src={lightImage}
-            alt="Traffic Light"
-            className="w-20 h-20 object-cover mb-2"
-          />
-          <h1 className="text-white text-2xl font-semibold">
-            Admin Control Panel
-          </h1>
+          <img src={lightImage} alt="Traffic Light" className="w-20 h-20 object-cover mb-2" />
+          <h1 className="text-white text-2xl font-semibold">Admin Control Panel</h1>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -96,6 +104,25 @@ const AdminLogin: React.FC = () => {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
+          </div>
+
+          <div className="flex justify-between items-center text-sm text-gray-300">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+                className="form-checkbox text-blue-500"
+              />
+              <span>Remember me</span>
+            </label>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-blue-400 hover:underline"
+            >
+              Forgot password?
+            </button>
           </div>
 
           <button

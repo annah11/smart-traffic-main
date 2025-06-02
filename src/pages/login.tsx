@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDocs, query, where, collection } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
@@ -10,45 +10,65 @@ import { toast } from "react-toastify";
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmployeeEmail");
+    const savedPassword = localStorage.getItem("rememberedEmployeePassword");
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRemember(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (email.trim() === "" || password.trim() === "") {
       toast.warning("Please enter both email and password.");
       return;
     }
 
     try {
-      // Sign in with Firebase Auth
+      setLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
 
-      // Check Firestore user role
       const q = query(collection(db, "users"), where("uid", "==", uid));
-      const querySnapshot = await getDocs(q);
+      const snapshot = await getDocs(q);
 
-      if (querySnapshot.empty) {
+      if (snapshot.empty) {
         toast.error("User not registered by admin.");
         return;
       }
 
-      const userData = querySnapshot.docs[0].data();
-      if (userData.role !== "Employee") {
-        toast.error("Access denied. Not an employee or Incorrect credential");
+      const userData = snapshot.docs[0].data();
+      const role = (userData.role || "").toUpperCase();
+
+      if (role !== "EMPLOYEE") {
+        toast.error("Access denied. Not an EMPLOYEE.");
         return;
+      }
+
+      if (remember) {
+        localStorage.setItem("rememberedEmployeeEmail", email);
+        localStorage.setItem("rememberedEmployeePassword", password);
+      } else {
+        localStorage.removeItem("rememberedEmployeeEmail");
+        localStorage.removeItem("rememberedEmployeePassword");
       }
 
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error("Login failed: " + error.message);
-      } else {
-        toast.error("Login failed: An unknown error occurred.");
-      }
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error("Login failed: " + message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,7 +137,7 @@ const Login: React.FC = () => {
             </label>
             <button
               type="button"
-              onClick={() => alert("Redirect to reset password flow")}
+              onClick={() => navigate("/forgot-password")}
               className="text-blue-500 hover:underline"
             >
               Forgot password?
@@ -126,16 +146,17 @@ const Login: React.FC = () => {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
           >
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <div className="mt-4">
           <button
             onClick={handleAdminLogin}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition"
+            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
           >
             Login as Admin
           </button>

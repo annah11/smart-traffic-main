@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 import {
   Home,
   Map,
-  Camera,
   BarChart3,
   AlertTriangle,
   Activity,
@@ -28,9 +27,9 @@ import {
   User,
   LogOut
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { getAuth, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DashboardSidebar() {
   const location = useLocation();
@@ -38,6 +37,8 @@ export function DashboardSidebar() {
   const { theme } = useTheme();
   const { state } = useSidebar();
   const isDarkMode = theme === "dark";
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -45,7 +46,6 @@ export function DashboardSidebar() {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (!confirmLogout) return;
 
-    const auth = getAuth();
     try {
       await signOut(auth);
       toast.success("Logged out successfully");
@@ -59,9 +59,14 @@ export function DashboardSidebar() {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader className="flex items-center gap-2">
-        <div className={cn("rounded-md p-1", isDarkMode ? "bg-blue-600" : "bg-blue-500")}>
-          <Camera className="h-5 w-5 text-white" />
-        </div>
+        <Link to="/account" className="cursor-pointer">
+          <Avatar className="h-9 w-9">
+            {user?.photoURL && <AvatarImage src={user.photoURL} alt="Profile" />}
+            <AvatarFallback>
+              {user?.email?.[0]?.toUpperCase() || "U"}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
         <div className="flex flex-col">
           <span className="text-sm font-bold">smart traffic</span>
           <span className="text-xs text-muted-foreground">Traffic Control</span>
@@ -92,7 +97,7 @@ export function DashboardSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Camera Feeds">
                   <Link to="/cameras" data-active={isActive("/cameras")}>
-                    <Camera className="h-4 w-4 mr-2" />
+                    <Map className="h-4 w-4 mr-2" />
                     Camera Feeds
                   </Link>
                 </SidebarMenuButton>

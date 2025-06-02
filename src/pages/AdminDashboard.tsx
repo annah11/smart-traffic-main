@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { UserPlus, Users, Trash2, Pencil } from "lucide-react";
-import { db } from "@/firebase/config";
+import { db, firebaseConfig } from "@/firebase/config";
 import {
   collection,
-  addDoc,
   getDocs,
   deleteDoc,
   doc,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
+import { initializeApp, getApps } from "firebase/app";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,7 +23,6 @@ interface User {
   name: string;
   email: string;
   role: string;
-  password: string;
 }
 
 const AdminDashboard: React.FC = () => {
@@ -27,17 +32,19 @@ const AdminDashboard: React.FC = () => {
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchUsers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       const userList: User[] = [];
       querySnapshot.forEach((docSnap) => {
-        userList.push({ id: docSnap.id, ...docSnap.data() } as User);
+        userList.push({ id: docSnap.id, ...(docSnap.data() as User) });
       });
       setUsers(userList);
-    } catch (error) {
-      toast.error("Error fetching users");
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      toast.error("Error fetching users: " + errMsg);
     }
   };
 
@@ -45,64 +52,62 @@ const AdminDashboard: React.FC = () => {
     fetchUsers();
   }, []);
 
-  const validatePassword = (pw: string): boolean => {
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[\]{};':"\\|,.<>/?]).{8,}$/;
-    return regex.test(pw);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !role || !password) {
+    if (!name || !email || !role || (!editId && !password)) {
       toast.warning("Please fill in all fields.");
       return;
     }
 
-    if (!validatePassword(password)) {
-      toast.warning(
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-      );
-      return;
-    }
+    const upperRole = role.toUpperCase();
+    setLoading(true);
 
     try {
-      const upperRole = role.toUpperCase();
-
       if (editId) {
         await updateDoc(doc(db, "users", editId), {
           name,
           email,
           role: upperRole,
-          password,
         });
         setUsers((prev) =>
           prev.map((user) =>
-            user.id === editId ? { ...user, name, email, role: upperRole, password } : user
+            user.id === editId ? { ...user, name, email, role: upperRole } : user
           )
         );
+        toast.success("User updated.");
         setEditId(null);
-        toast.success("User updated successfully.");
       } else {
-        const newDoc = await addDoc(collection(db, "users"), {
+        const appName = "SecondaryApp" + new Date().getTime();
+        const secondaryApp = initializeApp(firebaseConfig, appName);
+        const secondaryAuth = getAuth(secondaryApp);
+        const userCred = await createUserWithEmailAndPassword(
+          secondaryAuth,
+          email,
+          password
+        );
+
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          uid: userCred.user.uid,
           name,
           email,
           role: upperRole,
-          password,
+          createdAt: new Date().toISOString(),
         });
 
-        setUsers((prev) => [
-          ...prev,
-          { id: newDoc.id, name, email, role: upperRole, password },
-        ]);
-        toast.success("User added successfully.");
+        await signOut(secondaryAuth);
+        toast.success("User successfully registered and can now log in.");
       }
 
       setName("");
       setEmail("");
-      setRole("EMPLOYEE");
       setPassword("");
-    } catch (error) {
-      toast.error("Error: " + (error as Error).message);
+      setRole("EMPLOYEE");
+      fetchUsers();
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      toast.error("Error: " + errMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,20 +116,19 @@ const AdminDashboard: React.FC = () => {
     setName(user.name);
     setEmail(user.email);
     setRole(user.role);
-    setPassword(user.password);
   };
 
   const handleDelete = async (id?: string) => {
     if (!id) return;
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
       await deleteDoc(doc(db, "users", id));
       setUsers((prev) => prev.filter((user) => user.id !== id));
-      toast.success("User deleted successfully.");
-    } catch (error) {
-      toast.error("Error deleting user.");
+      toast.success("User deleted.");
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      toast.error("Error deleting user: " + errMsg);
     }
   };
 
@@ -132,7 +136,9 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] text-white px-4 py-10 flex flex-col items-center gap-12">
       <div className="flex items-center gap-2">
         <UserPlus className="text-blue-400 w-6 h-6" />
-        <h2 className="text-2xl font-bold">Admin Dashboard – {editId ? "Edit User" : "Add User"}</h2>
+        <h2 className="text-2xl font-bold">
+          Admin Dashboard – {editId ? "Edit User" : "Add User"}
+        </h2>
       </div>
 
       <div className="w-full max-w-md bg-[#1E293B] p-6 rounded-xl shadow-lg">
@@ -142,7 +148,7 @@ const AdminDashboard: React.FC = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Full Name"
-            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md focus:ring-2 focus:ring-blue-500"
+            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md"
             required
           />
           <input
@@ -150,30 +156,33 @@ const AdminDashboard: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md focus:ring-2 focus:ring-blue-500"
+            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md"
             required
           />
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md focus:ring-2 focus:ring-blue-500"
+            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md"
           >
             <option value="EMPLOYEE">EMPLOYEE</option>
             <option value="ADMIN">ADMIN</option>
           </select>
-          <input
-            type="text"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Temporary Password"
-            className="w-full h-12 px-4 bg-[#334155] text-white rounded-md focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          {!editId && (
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full h-12 px-4 bg-[#334155] text-white rounded-md"
+              required
+            />
+          )}
           <button
             type="submit"
             className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md"
+            disabled={loading}
           >
-            {editId ? "Update User" : "Add User"}
+            {loading ? (editId ? "Updating..." : "Adding...") : editId ? "Update User" : "Add User"}
           </button>
         </form>
       </div>
@@ -189,36 +198,35 @@ const AdminDashboard: React.FC = () => {
               <th className="py-2 px-4">Name</th>
               <th className="py-2 px-4">Email</th>
               <th className="py-2 px-4">Role</th>
-              <th className="py-2 px-4">Password</th>
-              <th className="py-2 px-4 text-center">Action</th>
+              <th className="py-2 px-4 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-4 text-gray-400">
+                <td colSpan={4} className="text-center py-4 text-gray-400">
                   No users registered yet.
                 </td>
               </tr>
             ) : (
               users.map((user, idx) => (
-                <tr key={user.id || idx} className="border-b border-gray-700 hover:bg-[#334155]">
+                <tr
+                  key={user.id || idx}
+                  className="border-b border-gray-700 hover:bg-[#334155]"
+                >
                   <td className="py-2 px-4">{user.name}</td>
                   <td className="py-2 px-4">{user.email}</td>
                   <td className="py-2 px-4">{user.role}</td>
-                  <td className="py-2 px-4">{user.password}</td>
                   <td className="py-2 px-4 text-center flex gap-2 justify-center">
                     <button
                       onClick={() => handleEdit(user)}
-                      className="text-yellow-400 hover:text-yellow-600 transition"
-                      title="Edit"
+                      className="text-yellow-400 hover:text-yellow-600"
                     >
                       <Pencil size={18} />
                     </button>
                     <button
                       onClick={() => handleDelete(user.id)}
-                      className="text-red-400 hover:text-red-600 transition"
-                      title="Delete"
+                      className="text-red-400 hover:text-red-600"
                     >
                       <Trash2 size={18} />
                     </button>
