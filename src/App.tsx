@@ -16,6 +16,9 @@ import Login from "./pages/login";
 import AdminLogin from "./pages/adminlogin";
 import AdminSignup from "./pages/adminsignup";
 import AdminDashboard from "./pages/AdminDashboard";
+import AlertsView from "./pages/AlertsView";
+import CameraFeedsView from "./pages/CameraFeedsView";
+import SettingsView from "./pages/SettingsView";
 import NotFound from "./pages/NotFound";
 
 // 🔒 Protected Route
@@ -35,21 +38,10 @@ const App = () => (
               <Route path="/dashboard" element={<Index />} />
               <Route path="/adminlogin" element={<AdminLogin />} />
               <Route path="/adminsignup" element={<AdminSignup />} />
-              
-              {/* ✅ Admin-Only Access */}
-             <Route
-  path="/admindashboard"
-  element={
-    <ProtectedAdminRoute>
-      <AdminDashboard />
-    </ProtectedAdminRoute>
-  }
-/>
-
-
+              <Route path="/admindashboard" element={<AdminDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-
+            {/* Toastify container for success/warning/error alerts */}
             <ToastContainer position="top-center" autoClose={3000} />
           </main>
         </BrowserRouter>
