@@ -23,6 +23,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import SystemStatusView from "./pages/SystemStatusView";
 import IoTDevicesView from "./pages/IoTDevicesView";
 import DeviceLogsView from "./pages/DeviceLogs"; // NEW: Log details page
+import { TrafficMap } from "./pages/Trafficmap"; // ✅ Named import for TrafficMap
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
 const queryClient = new QueryClient();
@@ -49,7 +50,7 @@ const App = () => (
                 }
               />
 
-              {/* Public or logged-in accessible route */}
+              {/* Public or logged-in accessible routes */}
               <Route path="/dashboard" element={<Index />} />
               <Route path="/account" element={<AccountPage />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -58,7 +59,9 @@ const App = () => (
               <Route path="/settings" element={<SettingsView />} />
               <Route path="/system-status" element={<SystemStatusView />} />
               <Route path="/devices" element={<IoTDevicesView />} />
-              <Route path="/logs/:deviceId" element={<DeviceLogsView />} /> {/* NEW */}
+              <Route path="/logs/:deviceId" element={<DeviceLogsView />} />
+              <Route path="/map" element={<TrafficMap />} /> {/* ✅ Traffic Map route */}
+
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastContainer position="top-center" autoClose={3000} />
