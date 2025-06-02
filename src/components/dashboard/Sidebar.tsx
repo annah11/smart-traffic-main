@@ -81,7 +81,7 @@ export function DashboardSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Dashboard">
-                  <Link to="/" data-active={isActive("/")}>
+                  <Link to="/dashboard" data-active={isActive("/dashboard")}>
                     <Home className="h-4 w-4 mr-2" />
                     Dashboard
                   </Link>

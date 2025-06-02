@@ -33,17 +33,19 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Navigate to="/login" />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<Index />} />
               <Route path="/adminlogin" element={<AdminLogin />} />
               <Route path="/adminsignup" element={<AdminSignup />} />
-              <Route
-                path="/admindashboard"
-                element={
-                  <ProtectedAdminRoute>
-                    <AdminDashboard />
-                  </ProtectedAdminRoute>
-                }
-              />
+
+              {/* Admin-only route */}
+              <Route path="/admindashboard" element={
+                <ProtectedAdminRoute>
+                  <AdminDashboard />
+                </ProtectedAdminRoute>
+              } />
+
+              {/* Public or logged-in accessible route */}
+              <Route path="/dashboard" element={<Index />} />
+
               <Route path="/account" element={<AccountPage />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/alerts" element={<AlertsView />} />
