@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon } from "lucide-react";
-import { AuthNav } from "./AuthNav";
 
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -79,7 +78,6 @@ export const Navbar = () => {
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             <span className="sr-only">Toggle theme</span>
           </Button>
-          <AuthNav />
         </div>
       </div>
     </nav>

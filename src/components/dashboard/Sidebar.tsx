@@ -53,7 +53,7 @@ export function DashboardSidebar() {
           <Camera className="h-5 w-5 text-white" />
         </div>
         <div className="flex flex-col">
-          <span className="text-sm font-bold">FlowVision</span>
+          <span className="text-sm font-bold">smart traffic</span>
           <span className="text-xs text-muted-foreground">Traffic Control</span>
         </div>
         <SidebarTrigger className="ml-auto" />
@@ -102,6 +102,15 @@ export function DashboardSidebar() {
                     Alerts
                   </Link>
                 </SidebarMenuButton>
+                <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Admin Dashboard">
+                <Link to="/admindashboard" data-active={isActive("/admindashboard")}>
+                  <User className="h-4 w-4 mr-2" />
+                  Admin Dashboard
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
