@@ -20,6 +20,7 @@ import SettingsView from "./pages/SettingsView";
 import NotFound from "./pages/NotFound";
 import AccountPage from "./pages/Account";
 import ForgotPassword from "./pages/ForgotPassword";
+import SystemStatusView from "./pages/SystemStatusView";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/alerts" element={<AlertsView />} />
               <Route path="/cameras" element={<CameraFeedsView />} />
               <Route path="/settings" element={<SettingsView />} />
+              <Route path="/system-status" element={<SystemStatusView />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastContainer position="top-center" autoClose={3000} />

@@ -1,5 +1,7 @@
+// src/pages/AdminDashboard.tsx
 import React, { useState, useEffect } from "react";
-import { UserPlus, Users, Trash2, Pencil } from "lucide-react";
+import { UserPlus, Users, Trash2, Pencil, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { db, firebaseConfig } from "@/firebase/config";
 import {
   collection,
@@ -34,6 +36,7 @@ const AdminDashboard: React.FC = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
@@ -135,11 +138,19 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0F172A] text-white px-4 py-10 flex flex-col items-center gap-12">
-      <div className="flex items-center gap-2">
-        <UserPlus className="text-blue-400 w-6 h-6" />
-        <h2 className="text-2xl font-bold">
-          Admin Dashboard – {editId ? "Edit User" : "Add User"}
-        </h2>
+      <div className="flex w-full justify-between items-center max-w-5xl">
+        <div className="flex items-center gap-2">
+          <UserPlus className="text-blue-400 w-6 h-6" />
+          <h2 className="text-2xl font-bold">
+            Admin Dashboard – {editId ? "Edit User" : "Add User"}
+          </h2>
+        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="text-sm bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
+        >
+          <ArrowLeft className="inline w-4 h-4 mr-1" /> Back
+        </button>
       </div>
 
       <div className="w-full max-w-md bg-[#1E293B] p-6 rounded-xl shadow-lg">
