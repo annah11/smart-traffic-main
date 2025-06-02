@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { UserPlus, Users, Trash2, Pencil } from "lucide-react";
-import { auth, db } from "@/firebase/config";
+import { db } from "@/firebase/config";
 import {
   collection,
   addDoc,
@@ -9,7 +9,6 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,7 +23,7 @@ interface User {
 const AdminDashboard: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("Employee");
+  const [role, setRole] = useState("EMPLOYEE");
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
@@ -67,46 +66,40 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
+      const upperRole = role.toUpperCase();
+
       if (editId) {
         await updateDoc(doc(db, "users", editId), {
           name,
           email,
-          role,
+          role: upperRole,
           password,
         });
         setUsers((prev) =>
           prev.map((user) =>
-            user.id === editId ? { ...user, name, email, role, password } : user
+            user.id === editId ? { ...user, name, email, role: upperRole, password } : user
           )
         );
         setEditId(null);
         toast.success("User updated successfully.");
       } else {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        const uid = userCredential.user.uid;
-
         const newDoc = await addDoc(collection(db, "users"), {
           name,
           email,
-          role,
+          role: upperRole,
           password,
-          uid,
         });
 
         setUsers((prev) => [
           ...prev,
-          { id: newDoc.id, name, email, role, password },
+          { id: newDoc.id, name, email, role: upperRole, password },
         ]);
         toast.success("User added successfully.");
       }
 
       setName("");
       setEmail("");
-      setRole("Employee");
+      setRole("EMPLOYEE");
       setPassword("");
     } catch (error) {
       toast.error("Error: " + (error as Error).message);
@@ -165,8 +158,8 @@ const AdminDashboard: React.FC = () => {
             onChange={(e) => setRole(e.target.value)}
             className="w-full h-12 px-4 bg-[#334155] text-white rounded-md focus:ring-2 focus:ring-blue-500"
           >
-            <option value="Employee">Employee</option>
-            <option value="Admin">Admin</option>
+            <option value="EMPLOYEE">EMPLOYEE</option>
+            <option value="ADMIN">ADMIN</option>
           </select>
           <input
             type="text"

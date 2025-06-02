@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDocs, query, where, collection } from "firebase/firestore";
+import { auth, db } from "@/firebase/config";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
+import { toast } from "react-toastify";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -10,14 +14,42 @@ const Login: React.FC = () => {
   const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim() === "" || password.trim() === "") {
-      alert("Please enter both email and password.");
+      toast.warning("Please enter both email and password.");
       return;
     }
-    alert("Login successful! Redirecting...");
-    navigate("/dashboard");
+
+    try {
+      // Sign in with Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      // Check Firestore user role
+      const q = query(collection(db, "users"), where("uid", "==", uid));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        toast.error("User not registered by admin.");
+        return;
+      }
+
+      const userData = querySnapshot.docs[0].data();
+      if (userData.role !== "Employee") {
+        toast.error("Access denied. Not an employee or Incorrect credential");
+        return;
+      }
+
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error("Login failed: " + error.message);
+      } else {
+        toast.error("Login failed: An unknown error occurred.");
+      }
+    }
   };
 
   const handleAdminLogin = () => {
@@ -25,11 +57,14 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}>
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <div className="w-96 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col">
         <div className="flex flex-col items-center justify-center mb-8">
           <img src={lightImage} alt="Traffic Light" className="w-20 h-20 object-cover mb-2" />
@@ -38,7 +73,7 @@ const Login: React.FC = () => {
 
         <form onSubmit={handleLogin} className="space-y-6 flex-1">
           <div className="flex flex-col">
-            <label className="text-gray-300 text-sm mb-1">Email or Username</label>
+            <label className="text-gray-300 text-sm mb-1">Email</label>
             <input
               type="email"
               placeholder="you@example.com"
@@ -76,14 +111,14 @@ const Login: React.FC = () => {
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-400"
+                className="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 rounded"
               />
               <span>Remember me</span>
             </label>
             <button
               type="button"
-              className="text-blue-500 hover:underline"
               onClick={() => alert("Redirect to reset password flow")}
+              className="text-blue-500 hover:underline"
             >
               Forgot password?
             </button>

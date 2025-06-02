@@ -27,11 +27,12 @@ const AdminLogin: React.FC = () => {
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      if (userDoc.exists() && userDoc.data().role === "admin") {
+      if (userDoc.exists() && userDoc.data().role === "ADMIN") {
+
         alert("Welcome Admin!");
         navigate("/dashboard");
       } else {
-        alert("Access denied. Not an admin.");
+        alert("Access denied. Not an admin. or Incorrect credential");
       }
     } catch (error: unknown) {
       const err = error as Error;

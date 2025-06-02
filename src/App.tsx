@@ -1,3 +1,5 @@
+// src/App.tsx
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -5,8 +7,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
-
-// Toastify
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,6 +17,9 @@ import AdminLogin from "./pages/adminlogin";
 import AdminSignup from "./pages/adminsignup";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+
+// 🔒 Protected Route
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -32,10 +35,21 @@ const App = () => (
               <Route path="/dashboard" element={<Index />} />
               <Route path="/adminlogin" element={<AdminLogin />} />
               <Route path="/adminsignup" element={<AdminSignup />} />
-              <Route path="/admindashboard" element={<AdminDashboard />} />
+              
+              {/* ✅ Admin-Only Access */}
+             <Route
+  path="/admindashboard"
+  element={
+    <ProtectedAdminRoute>
+      <AdminDashboard />
+    </ProtectedAdminRoute>
+  }
+/>
+
+
               <Route path="*" element={<NotFound />} />
             </Routes>
-            {/* Toastify container for success/warning/error alerts */}
+
             <ToastContainer position="top-center" autoClose={3000} />
           </main>
         </BrowserRouter>
