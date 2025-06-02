@@ -16,6 +16,9 @@ import Login from "./pages/login";
 import AdminLogin from "./pages/adminlogin";
 import AdminSignup from "./pages/adminsignup";
 import AdminDashboard from "./pages/AdminDashboard";
+import AlertsView from "./pages/AlertsView";
+import CameraFeedsView from "./pages/CameraFeedsView";
+import SettingsView from "./pages/SettingsView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,9 +36,11 @@ const App = () => (
               <Route path="/adminlogin" element={<AdminLogin />} />
               <Route path="/adminsignup" element={<AdminSignup />} />
               <Route path="/admindashboard" element={<AdminDashboard />} />
+              <Route path="/alerts" element={<AlertsView />} />
+              <Route path="/cameras" element={<CameraFeedsView />} />
+              <Route path="/settings" element={<SettingsView />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            {/* Toastify container for success/warning/error alerts */}
             <ToastContainer position="top-center" autoClose={3000} />
           </main>
         </BrowserRouter>
