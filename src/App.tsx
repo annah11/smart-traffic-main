@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,10 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 
-// Toastify
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 // Pages
 import Index from "./pages/Index";
 import Login from "./pages/login";
@@ -42,7 +40,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastContainer position="top-center" autoClose={3000} />
-          </main>
+
         </BrowserRouter>
         <Toaster />
         <Sonner />
