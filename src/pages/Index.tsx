@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/Sidebar";
 import { DashboardHeader } from "@/components/dashboard/Header";
@@ -34,6 +33,19 @@ const Index = () => {
   const [trafficLights, setTrafficLights] = useState<TrafficLightType[]>(trafficLightData);
   const isMobile = useIsMobile();
 
+  // Dynamic states for traffic volume & congestion
+  const [totalTrafficVolume, setTotalTrafficVolume] = useState(25429);
+  const [averageCongestion, setAverageCongestion] = useState(68);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTotalTrafficVolume(prev => prev + 7);
+      setAverageCongestion(prev => Math.min(100, prev + 2));
+    }, 9000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleChangeLightMode = (id: string, mode: TrafficLightMode) => {
     setTrafficLights(prev => 
       prev.map(light => 
@@ -61,14 +73,14 @@ const Index = () => {
             <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-3 sm:mb-6">
               <StatCard
                 title="Total Traffic Volume"
-                value="25,429"
+                value={totalTrafficVolume.toLocaleString()}
                 description="vehicles today"
                 icon={<Car />}
                 trend={{ value: "12%", isPositive: true }}
               />
               <StatCard
                 title="Average Congestion"
-                value="68%"
+                value={`${averageCongestion}%`}
                 description="across monitored zones"
                 icon={<Gauge />}
                 trend={{ value: "5%", isPositive: false }}
