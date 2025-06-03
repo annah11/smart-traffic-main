@@ -34,26 +34,9 @@ export function DashboardHeader() {
           {isMobile ? "Traffic Dashboard" : "Smart Traffic Management Dashboard"}
         </h1>
       </div>
+     
       
-      <div className="relative hidden sm:block">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-[200px] bg-background pl-8"
-        />
-      </div>
-      
-      <Button
-        variant="outline"
-        size="icon"
-        className="relative h-8 w-8 sm:h-9 sm:w-9"
-      >
-        <Bell className="h-4 w-4" />
-        <span className="absolute -right-1 -top-1 flex h-3 w-3 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-traffic-amber text-[10px] text-white">
-          2
-        </span>
-      </Button>
+     
       
       <Button
         variant="ghost"

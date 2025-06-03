@@ -103,14 +103,7 @@ export function DashboardSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Analytics">
-                  <Link to="/analytics" data-active={isActive("/analytics")}>
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Analytics
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+             
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Alerts">
                   <Link to="/alerts" data-active={isActive("/alerts")}>
