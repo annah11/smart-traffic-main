@@ -20,7 +20,7 @@ import {
 interface TrafficMetricsChartProps {
   title: string;
   type: "line" | "bar";
-  data: Array<Record<string, any>>;
+  data: Array<Record<string, unknown>>;
   className?: string;
   aspectRatio?: number;
 }
