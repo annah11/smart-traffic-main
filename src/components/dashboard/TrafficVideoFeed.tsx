@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,11 +22,11 @@ export function TrafficVideoFeed({
 }: TrafficVideoFeedProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  
-  // Mock video sources - these are free stock videos that loop well for traffic scenes
+
+  // Updated video sources with your links
   const videoSources = {
-    'video-1': 'https://assets.mixkit.co/videos/preview/mixkit-traffic-in-the-city-during-the-evening-34449-large.mp4',
-    'video-2': 'https://assets.mixkit.co/videos/preview/mixkit-top-aerial-shot-of-seashore-with-rocks-1090-large.mp4'
+    'video-1': 'https://v.ftcdn.net/02/44/10/34/700_F_244103433_SU95HFaIvOm46LkLot5Hex4DuNTK2WgK_ST.mp4',
+    'video-2': 'https://videocdn.cdnpk.net/videos/ec7e18ad-02b3-4291-8f21-944b6546028c/horizontal/previews/videvo_watermarked/small.mp4'
   };
 
   useEffect(() => {
