@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import backgroundImage from "@/images/background.png";
 import { FirebaseError } from "firebase/app";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -85,14 +86,15 @@ const ForgotPassword: React.FC = () => {
       }}
     >
       <div className="w-full max-w-sm sm:max-w-md md:w-96 bg-gray-800/95 dark:bg-card rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => navigate(getBackPath())}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition self-start"
+          className="flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition self-start p-0 h-auto min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
-        </button>
+        </Button>
         <h2 className="text-white text-2xl font-semibold mb-4 text-center">
           Forgot Password
         </h2>
@@ -109,25 +111,26 @@ const ForgotPassword: React.FC = () => {
             />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
+            className="w-full h-12 min-h-[44px] bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition disabled:opacity-70"
           >
             {isSubmitting ? "Sending..." : "Send Reset Email"}
-          </button>
+          </Button>
         </form>
 
         <p className="text-center text-gray-500 text-xs mt-4">
           Check your inbox and spam folder. Link expires in 1 hour.
         </p>
-        <button
+        <Button
           type="button"
+          variant="link"
           onClick={() => navigate(getBackPath())}
-          className="mt-4 text-center text-blue-400 hover:underline text-sm"
+          className="mt-4 text-blue-400 hover:text-blue-300 hover:underline text-sm p-0 h-auto font-normal"
         >
           Return to login
-        </button>
+        </Button>
       </div>
     </div>
   );

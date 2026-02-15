@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
 
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
@@ -102,14 +103,15 @@ const AdminSignup: React.FC = () => {
       }}
     >
       <div className="w-full max-w-sm sm:max-w-md md:w-96 bg-gray-800/95 dark:bg-card rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => navigate("/adminlogin")}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition self-start"
+          className="flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition self-start p-0 h-auto min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
-        </button>
+        </Button>
         <div className="flex flex-col items-center justify-center mb-8">
           <img
             src={lightImage}
@@ -177,33 +179,36 @@ const AdminSignup: React.FC = () => {
           </div>
 
           <div className="text-right">
-            <button
+            <Button
               type="button"
+              variant="link"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-sm text-yellow-300 underline hover:text-yellow-400 transition"
+              className="text-sm text-yellow-300 hover:text-yellow-400 p-0 h-auto font-normal"
             >
-              {showPassword ? "🙈 Hide Passwords" : "👁️ Show Passwords"}
-            </button>
+              {showPassword ? "Hide Passwords" : "Show Passwords"}
+            </Button>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition"
+            className="w-full h-12 min-h-[44px] bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition disabled:opacity-70"
           >
             {loading ? "Creating..." : "Create Admin Account"}
-          </button>
+          </Button>
         </form>
 
-        <div className="mt-4 text-center text-sm">
-          <p className="text-gray-400">Already registered?</p>
-          <button
+        <p className="mt-4 text-center text-sm text-gray-400">
+          Already registered?{" "}
+          <Button
+            type="button"
+            variant="link"
             onClick={() => navigate("/adminlogin")}
-            className="text-blue-400 hover:underline"
+            className="text-blue-400 hover:text-blue-300 hover:underline p-0 h-auto font-normal inline"
           >
             Go to Login
-          </button>
-        </div>
+          </Button>
+        </p>
 
         <p className="text-center text-gray-500 text-xs mt-4">
           Ethiopian Traffic Agency

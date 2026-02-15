@@ -7,6 +7,7 @@ import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 import { toast } from "react-toastify";
 import { FirebaseError } from "firebase/app";
+import { Button } from "@/components/ui/button";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -152,13 +153,15 @@ const Login: React.FC = () => {
                 className="w-full h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 text-sm"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 h-8 min-w-0 px-2"
               >
                 {showPassword ? "Hide" : "Show"}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -172,37 +175,42 @@ const Login: React.FC = () => {
               />
               <span>Remember me</span>
             </label>
-            <button
+            <Button
               type="button"
+              variant="link"
               onClick={() => navigate("/forgot-password", { state: { from: "user" } })}
-              className="text-blue-500 hover:underline"
+              className="text-blue-400 hover:text-blue-300 hover:underline p-0 h-auto font-normal"
             >
               Forgot password?
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
+            className="w-full h-12 min-h-[44px] bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition disabled:opacity-70"
           >
             {loading ? "Signing in..." : "Sign In"}
-          </button>
+          </Button>
         </form>
 
-        <div className="mt-4 space-y-2">
-          <button
+        <div className="mt-4 flex flex-col gap-3">
+          <Button
+            type="button"
+            variant="secondary"
             onClick={() => navigate("/signup")}
-            className="w-full h-12 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg transition"
+            className="w-full h-12 min-h-[44px] bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg transition"
           >
             Create Account
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
             onClick={handleAdminLogin}
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+            className="w-full h-12 min-h-[44px] border-gray-500 bg-transparent hover:bg-gray-700/50 text-white font-semibold rounded-lg transition"
           >
             Login as Admin
-          </button>
+          </Button>
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-4">

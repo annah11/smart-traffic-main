@@ -6,6 +6,7 @@ import { doc, getDoc, enableNetwork } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
 import { FirebaseError } from "firebase/app";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
@@ -116,13 +117,15 @@ const AdminLogin: React.FC = () => {
                 className="w-full h-12 px-4 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 text-sm"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 h-8 min-w-0 px-2"
               >
                 {showPassword ? "Hide" : "Show"}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -136,42 +139,48 @@ const AdminLogin: React.FC = () => {
               />
               <span>Remember me</span>
             </label>
-            <button
+            <Button
               type="button"
+              variant="link"
               onClick={() => navigate("/forgot-password", { state: { from: "admin" } })}
-              className="text-blue-400 hover:underline"
+              className="text-blue-400 hover:text-blue-300 hover:underline p-0 h-auto font-normal"
             >
               Forgot password?
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition"
+            className="w-full h-12 min-h-[44px] bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition disabled:opacity-70"
           >
             {loading ? "Signing in..." : "Sign in as Admin"}
-          </button>
+          </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm">
-          <p className="text-gray-400 mb-1">Not an admin?</p>
-          <button
-            onClick={() => navigate("/login")}
-            className="text-blue-400 hover:underline"
-          >
-            Go to User Login
-          </button>
-
-          <div className="mt-4">
-            <p className="text-gray-400">New Admin?</p>
-            <button
+        <div className="mt-6 space-y-4 text-center text-sm">
+          <p className="text-gray-400">
+            Not an admin?{" "}
+            <Button
+              type="button"
+              variant="link"
+              onClick={() => navigate("/login")}
+              className="text-blue-400 hover:text-blue-300 hover:underline p-0 h-auto font-normal inline"
+            >
+              Go to User Login
+            </Button>
+          </p>
+          <p className="text-gray-400">
+            New Admin?{" "}
+            <Button
+              type="button"
+              variant="link"
               onClick={() => navigate("/adminsignup")}
-              className="text-blue-400 hover:underline mt-1"
+              className="text-blue-400 hover:text-blue-300 hover:underline p-0 h-auto font-normal inline"
             >
               Register as Admin
-            </button>
-          </div>
+            </Button>
+          </p>
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-6">
