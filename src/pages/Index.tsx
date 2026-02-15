@@ -124,7 +124,7 @@ const Index = () => {
             
             <div className="mb-3 sm:mb-6">
               <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Live Video Feeds</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 <TrafficVideoFeed
                   id="video-1"
                   title="Meskel Square Live Feed"
@@ -135,6 +135,12 @@ const Index = () => {
                   id="video-2"
                   title="Bole Road Live Feed"
                   location="Bole Road, Addis Ababa"
+                  status="active"
+                />
+                <TrafficVideoFeed
+                  id="video-3"
+                  title="Churchill Avenue Live Feed"
+                  location="Churchill Ave, Addis Ababa"
                   status="active"
                 />
               </div>

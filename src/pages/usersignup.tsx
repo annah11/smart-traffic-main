@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
-const AdminSignup: React.FC = () => {
+const UserSignup: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +17,7 @@ const AdminSignup: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
   const navigate = useNavigate();
 
   const isValidPassword = (pwd: string): boolean => {
@@ -64,7 +65,7 @@ const AdminSignup: React.FC = () => {
           uid: user.uid,
           name: fullName,
           email: user.email,
-          role: "ADMIN",
+          role: "EMPLOYEE",
           createdAt: new Date(),
         });
       } catch (firestoreError) {
@@ -72,20 +73,22 @@ const AdminSignup: React.FC = () => {
         throw firestoreError;
       }
 
-      toast.success("Admin account created successfully! Redirecting to sign in...", {
+      toast.success("Account created successfully! Redirecting to sign in...", {
         autoClose: 2500,
         position: "top-center",
       });
-      setTimeout(() => navigate("/adminlogin"), 1500);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (error: unknown) {
       const err = error as Error;
-      console.error("Signup Error:", err.message);
-      if (err.message?.includes("auth/email-already-in-use") || err.message?.includes("EMAIL_EXISTS")) {
-        toast.error("This email is already registered. Go to Admin Login to sign in.");
-      } else if (err.message?.includes("permission-denied") || err.message?.includes("PERMISSION_DENIED")) {
+      const msg = err.message || String(error);
+      console.error("Signup Error:", msg);
+      if (msg.includes("auth/email-already-in-use") || msg.includes("EMAIL_EXISTS")) {
+        setEmailExists(true);
+        toast.error("This email is already registered. Sign in below.");
+      } else if (msg.includes("permission-denied") || msg.includes("PERMISSION_DENIED")) {
         toast.error("Firestore permission denied. Check Firebase Console > Firestore > Rules.");
       } else {
-        toast.error("Signup failed: " + err.message);
+        toast.error("Signup failed: " + msg);
       }
     } finally {
       setLoading(false);
@@ -104,7 +107,7 @@ const AdminSignup: React.FC = () => {
       <div className="w-full max-w-sm sm:max-w-md md:w-96 bg-gray-800/95 dark:bg-card rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col">
         <button
           type="button"
-          onClick={() => navigate("/adminlogin")}
+          onClick={() => navigate("/login")}
           className="flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition self-start"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -116,7 +119,7 @@ const AdminSignup: React.FC = () => {
             alt="Traffic Light"
             className="w-20 h-20 object-cover mb-2"
           />
-          <h1 className="text-white text-2xl font-semibold">Admin Registration</h1>
+          <h1 className="text-white text-2xl font-semibold">User Registration</h1>
         </div>
 
         <form onSubmit={handleSignup} className="space-y-6">
@@ -133,12 +136,15 @@ const AdminSignup: React.FC = () => {
           </div>
 
           <div>
-            <label className="text-gray-300 text-sm mb-1 block">Admin Email</label>
+            <label className="text-gray-300 text-sm mb-1 block">Email</label>
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@smart.gov"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailExists(false);
+              }}
+              placeholder="you@example.com"
               required
               className="w-full h-12 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -182,7 +188,7 @@ const AdminSignup: React.FC = () => {
               onClick={() => setShowPassword(!showPassword)}
               className="text-sm text-yellow-300 underline hover:text-yellow-400 transition"
             >
-              {showPassword ? "🙈 Hide Passwords" : "👁️ Show Passwords"}
+              {showPassword ? "Hide Passwords" : "Show Passwords"}
             </button>
           </div>
 
@@ -191,26 +197,37 @@ const AdminSignup: React.FC = () => {
             disabled={loading}
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition"
           >
-            {loading ? "Creating..." : "Create Admin Account"}
+            {loading ? "Creating..." : "Create Account"}
           </button>
         </form>
 
+        {emailExists && (
+          <div className="mt-4 p-3 bg-amber-900/50 rounded-lg border border-amber-600/50">
+            <p className="text-amber-200 text-sm mb-2">This email is already registered.</p>
+            <button
+              onClick={() => navigate("/login", { state: { email } })}
+              className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-medium"
+            >
+              Go to Sign in
+            </button>
+          </div>
+        )}
         <div className="mt-4 text-center text-sm">
-          <p className="text-gray-400">Already registered?</p>
+          <p className="text-gray-400">Already have an account?</p>
           <button
-            onClick={() => navigate("/adminlogin")}
+            onClick={() => navigate("/login")}
             className="text-blue-400 hover:underline"
           >
-            Go to Login
+            Sign in
           </button>
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-4">
-          Ethiopian Traffic Agency
+          Powered by Ethiopian Traffic Agency
         </p>
       </div>
     </div>
   );
 };
 
-export default AdminSignup;
+export default UserSignup;

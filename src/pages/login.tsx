@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc, setDoc, enableNetwork } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 import { toast } from "react-toastify";
+import { FirebaseError } from "firebase/app";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -14,16 +15,21 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    const fromState = location.state as { email?: string } | null;
+    if (fromState?.email) {
+      setEmail(fromState.email);
+    }
     const savedEmail = localStorage.getItem("rememberedEmployeeEmail");
     const savedPassword = localStorage.getItem("rememberedEmployeePassword");
-    if (savedEmail && savedPassword) {
+    if (savedEmail && savedPassword && !fromState?.email) {
       setEmail(savedEmail);
       setPassword(savedPassword);
       setRemember(true);
     }
-  }, []);
+  }, [location.state]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,22 +41,42 @@ const Login: React.FC = () => {
 
     try {
       setLoading(true);
+      try {
+        await enableNetwork(db);
+      } catch {
+        // Ignore - will retry with operations
+      }
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
+      const userDocRef = doc(db, "users", uid);
+      let userDoc = await getDoc(userDocRef);
 
-      const q = query(collection(db, "users"), where("uid", "==", uid));
-      const snapshot = await getDocs(q);
+      if (!userDoc.exists()) {
+        try {
+          await setDoc(userDocRef, {
+            uid,
+            name: userCredential.user.displayName || email.split("@")[0],
+            email: userCredential.user.email,
+            role: "EMPLOYEE",
+            createdAt: new Date(),
+          });
+          userDoc = await getDoc(userDocRef);
+        } catch {
+          toast.error("Account exists but profile missing. Try Create Account or contact support.");
+          return;
+        }
+      }
 
-      if (snapshot.empty) {
-        toast.error("User not registered by admin.");
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      if (!userData) {
+        toast.error("User not found. Please register first.");
         return;
       }
 
-      const userData = snapshot.docs[0].data();
       const role = (userData.role || "").toUpperCase();
 
       if (role !== "EMPLOYEE") {
-        toast.error("Access denied. Not an EMPLOYEE.");
+        toast.error("Access denied. Not an EMPLOYEE. Use Admin Login if you are an admin.");
         return;
       }
 
@@ -62,11 +88,22 @@ const Login: React.FC = () => {
         localStorage.removeItem("rememberedEmployeePassword");
       }
 
-      toast.success("Login successful!");
-      navigate("/dashboard");
+      toast.success("Login successful! Redirecting to dashboard...", {
+        autoClose: 2500,
+        position: "top-center",
+      });
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      toast.error("Login failed: " + message);
+      if (error instanceof FirebaseError && error.code === "auth/invalid-credential") {
+        toast.error("Invalid email or password. Try again or use Forgot password.");
+      } else if (message.includes("offline") || message.includes("OFFLINE")) {
+        toast.error("No internet connection. Please check your network and try again.");
+      } else if (message.includes("permission") || message.includes("PERMISSION_DENIED")) {
+        toast.error("Firestore permission denied. See FIREBASE_SETUP.md - deploy Firestore rules.");
+      } else {
+        toast.error("Login failed: " + message);
+      }
     } finally {
       setLoading(false);
     }
@@ -78,14 +115,14 @@ const Login: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="w-96 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col">
+      <div className="w-full max-w-sm sm:max-w-md md:w-96 bg-gray-800/95 dark:bg-card rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col">
         <div className="flex flex-col items-center justify-center mb-8">
           <img src={lightImage} alt="Traffic Light" className="w-20 h-20 object-cover mb-2" />
           <h1 className="text-white text-2xl font-semibold">Smart Traffic Control</h1>
@@ -137,7 +174,7 @@ const Login: React.FC = () => {
             </label>
             <button
               type="button"
-              onClick={() => navigate("/forgot-password")}
+              onClick={() => navigate("/forgot-password", { state: { from: "user" } })}
               className="text-blue-500 hover:underline"
             >
               Forgot password?
@@ -153,7 +190,13 @@ const Login: React.FC = () => {
           </button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-2">
+          <button
+            onClick={() => navigate("/signup")}
+            className="w-full h-12 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg transition"
+          >
+            Create Account
+          </button>
           <button
             onClick={handleAdminLogin}
             className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"

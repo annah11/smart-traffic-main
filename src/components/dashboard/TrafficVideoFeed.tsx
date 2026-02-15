@@ -24,9 +24,10 @@ export function TrafficVideoFeed({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Updated video sources with your links
-  const videoSources = {
+  const videoSources: Record<string, string> = {
     'video-1': 'https://v.ftcdn.net/02/44/10/34/700_F_244103433_SU95HFaIvOm46LkLot5Hex4DuNTK2WgK_ST.mp4',
-    'video-2': 'https://videocdn.cdnpk.net/videos/ec7e18ad-02b3-4291-8f21-944b6546028c/horizontal/previews/videvo_watermarked/small.mp4'
+    'video-2': 'https://videocdn.cdnpk.net/videos/ec7e18ad-02b3-4291-8f21-944b6546028c/horizontal/previews/videvo_watermarked/small.mp4',
+    'video-3': 'https://v.ftcdn.net/02/44/10/34/700_F_244103433_SU95HFaIvOm46LkLot5Hex4DuNTK2WgK_ST.mp4',
   };
 
   useEffect(() => {
@@ -86,7 +87,7 @@ export function TrafficVideoFeed({
                 playsInline
                 autoPlay={isPlaying}
               >
-                <source src={videoSources[id as keyof typeof videoSources] || videoSources['video-1']} type="video/mp4" />
+                <source src={videoSources[id] || videoSources['video-1']} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
               <button

@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, enableNetwork } from "firebase/firestore";
 import { auth, db } from "@/firebase/config";
+import { FirebaseError } from "firebase/app";
+import { toast } from "react-toastify";
 import lightImage from "@/images/light.jpg";
 import backgroundImage from "@/images/background.png";
 
@@ -29,6 +31,11 @@ const AdminLogin: React.FC = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      try {
+        await enableNetwork(db);
+      } catch {
+        // Ignore
+      }
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -44,15 +51,27 @@ const AdminLogin: React.FC = () => {
           localStorage.removeItem("rememberedAdminPassword");
         }
 
-        alert("Welcome Admin!");
-        navigate("/dashboard");
+        toast.success("Welcome Admin! Redirecting to dashboard...", {
+          autoClose: 2500,
+          position: "top-center",
+        });
+        setTimeout(() => navigate("/dashboard"), 1500);
       } else {
-        alert("Access denied. Not an admin or incorrect credentials.");
+        toast.error("Access denied. Not an admin. Use User Login if you're an employee.");
       }
     } catch (error: unknown) {
       const err = error as Error;
-      console.error("Login Error:", err.message);
-      alert(`Login failed: ${err.message}`);
+      const message = err?.message || String(error);
+      if (error instanceof FirebaseError && error.code === "auth/invalid-credential") {
+        toast.error("Invalid email or password. Try again or use Forgot password.");
+      } else if (message.includes("offline") || message.includes("OFFLINE")) {
+        toast.error("No internet connection. Please check your network and try again.");
+      } else if (message.includes("permission") || message.includes("PERMISSION_DENIED")) {
+        toast.error("Firestore permission denied. See FIREBASE_SETUP.md - deploy Firestore rules.");
+      } else {
+        console.error("Login Error:", message);
+        toast.error("Login failed: " + message);
+      }
     } finally {
       setLoading(false);
     }
@@ -60,14 +79,14 @@ const AdminLogin: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="w-96 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col">
+      <div className="w-full max-w-sm sm:max-w-md md:w-96 bg-gray-800/95 dark:bg-card rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col">
         <div className="flex flex-col items-center justify-center mb-8">
           <img src={lightImage} alt="Traffic Light" className="w-20 h-20 object-cover mb-2" />
           <h1 className="text-white text-2xl font-semibold">Admin Control Panel</h1>
@@ -119,7 +138,7 @@ const AdminLogin: React.FC = () => {
             </label>
             <button
               type="button"
-              onClick={() => navigate("/forgot-password")}
+              onClick={() => navigate("/forgot-password", { state: { from: "admin" } })}
               className="text-blue-400 hover:underline"
             >
               Forgot password?
@@ -141,7 +160,7 @@ const AdminLogin: React.FC = () => {
             onClick={() => navigate("/login")}
             className="text-blue-400 hover:underline"
           >
-            Go to Employee Login
+            Go to User Login
           </button>
 
           <div className="mt-4">
@@ -150,7 +169,7 @@ const AdminLogin: React.FC = () => {
               onClick={() => navigate("/adminsignup")}
               className="text-blue-400 hover:underline mt-1"
             >
-              Sign up
+              Register as Admin
             </button>
           </div>
         </div>

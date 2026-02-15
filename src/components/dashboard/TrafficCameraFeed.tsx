@@ -17,6 +17,7 @@ interface TrafficCameraFeedProps {
   title: string;
   location: string;
   status: "active" | "warning" | "error";
+  imgUrl?: string;
   vehicleCount?: number;
   congestionLevel?: "low" | "medium" | "high";
   className?: string;
@@ -27,6 +28,7 @@ export function TrafficCameraFeed({
   title,
   location,
   status,
+  imgUrl,
   vehicleCount = 0,
   congestionLevel,
   className
@@ -35,16 +37,18 @@ export function TrafficCameraFeed({
   const [currentVehicleCount, setCurrentVehicleCount] = useState(vehicleCount);
   const [imageLoaded, setImageLoaded] = useState(true);
 
+  const imageSources = imgUrl ? [imgUrl] : images;
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setImageIndex((prevIndex) => (prevIndex + 1) % imageSources.length);
       setCurrentVehicleCount((prevCount) => prevCount + 1);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [imageSources.length]);
 
-  const currentImage = images[imageIndex];
+  const currentImage = imageSources[imageIndex];
 
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -72,12 +76,14 @@ export function TrafficCameraFeed({
         </Badge>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="relative aspect-video bg-muted">
+        <div className="relative aspect-video bg-muted min-h-[120px] sm:min-h-[140px]">
           {imageLoaded ? (
             <img
               src={currentImage}
-              alt={`Traffic camera ${id}`}
+              alt={`Traffic camera ${title}`}
               className="h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
               onError={() => setImageLoaded(false)}
             />
           ) : (

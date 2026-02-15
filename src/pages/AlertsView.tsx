@@ -24,9 +24,9 @@ const AlertsView = () => {
       id: "1",
       type: "error",
       title: "Traffic Light Malfunction",
-      message: "Traffic light at Main Street intersection is not responding",
+      message: "Traffic light at Meskel Square intersection is not responding",
       timestamp: new Date(),
-      location: "Main Street & 5th Avenue",
+      location: "Meskel Square & Bole, Addis Ababa",
       status: "new"
     },
     {
@@ -35,8 +35,26 @@ const AlertsView = () => {
       title: "High Traffic Volume",
       message: "Unusual traffic congestion detected",
       timestamp: new Date(Date.now() - 3600000),
-      location: "Highway 101 Exit",
+      location: "Bole Road Exit, Addis Ababa",
       status: "acknowledged"
+    },
+    {
+      id: "3",
+      type: "info",
+      title: "Scheduled Maintenance",
+      message: "Gotera Roundabout traffic lights under maintenance",
+      timestamp: new Date(Date.now() - 7200000),
+      location: "Gotera Roundabout",
+      status: "acknowledged"
+    },
+    {
+      id: "4",
+      type: "success",
+      title: "Incident Resolved",
+      message: "Piassa Junction congestion cleared",
+      timestamp: new Date(Date.now() - 86400000),
+      location: "Piassa Junction",
+      status: "resolved"
     }
   ]);
 
@@ -79,9 +97,9 @@ const AlertsView = () => {
         <div className="flex-1 flex flex-col">
           <DashboardHeader />
           
-          <div className="flex-1 p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold flex items-center gap-2">
+          <div className="flex-1 p-4 sm:p-6 overflow-auto">
+            <div className="mb-4 sm:mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
                 <Bell className="h-6 w-6" />
                 Alert Management
               </h1>
@@ -92,7 +110,7 @@ const AlertsView = () => {
               {alerts.map(alert => (
                 <Card key={alert.id}>
                   <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="flex items-center gap-2">
                         {getAlertIcon(alert.type)}
                         <CardTitle className="text-lg">{alert.title}</CardTitle>

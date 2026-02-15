@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Sidebar,
   SidebarHeader,
@@ -31,6 +31,16 @@ import {
 import { getAuth, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function DashboardSidebar() {
   const location = useLocation();
@@ -40,17 +50,16 @@ export function DashboardSidebar() {
   const isDarkMode = theme === "dark";
   const auth = getAuth();
   const user = auth.currentUser;
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
   const handleLogout = async () => {
-    const confirmLogout = window.confirm("Are you sure you want to log out?");
-    if (!confirmLogout) return;
-
     try {
       await signOut(auth);
       toast.success("Logged out successfully");
-      navigate("/adminlogin");
+      navigate("/login");
+      setLogoutOpen(false);
     } catch (error) {
       console.error("Logout failed:", error);
       toast.error("Logout failed. Please try again.");
@@ -161,7 +170,7 @@ export function DashboardSidebar() {
         <SidebarGroupContent className="w-full">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleLogout} tooltip="Log out">
+              <SidebarMenuButton onClick={() => setLogoutOpen(true)} tooltip="Log out">
                 <LogOut className="h-4 w-4 mr-2" />
                 Log Out
               </SidebarMenuButton>
@@ -169,6 +178,26 @@ export function DashboardSidebar() {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarFooter>
+
+      <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+        <AlertDialogContent className="rounded-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will need to sign in again to access the dashboard.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Log out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sidebar>
   );
 }

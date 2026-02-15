@@ -16,9 +16,9 @@ const SettingsView = () => {
         <div className="flex-1 flex flex-col">
           <DashboardHeader />
           
-          <div className="flex-1 p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold flex items-center gap-2">
+          <div className="flex-1 p-4 sm:p-6 overflow-auto">
+            <div className="mb-4 sm:mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
                 <Settings className="h-6 w-6" />
                 System Settings
               </h1>
@@ -35,21 +35,21 @@ const SettingsView = () => {
                   <CardDescription>Configure how you receive alerts and notifications</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="space-y-0.5">
                       <Label>Email Notifications</Label>
                       <p className="text-sm text-muted-foreground">Receive alerts via email</p>
                     </div>
                     <Switch defaultChecked />
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="space-y-0.5">
                       <Label>Push Notifications</Label>
                       <p className="text-sm text-muted-foreground">Receive alerts in browser</p>
                     </div>
                     <Switch defaultChecked />
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="space-y-0.5">
                       <Label>Alert Sound</Label>
                       <p className="text-sm text-muted-foreground">Play sound for critical alerts</p>
@@ -68,7 +68,7 @@ const SettingsView = () => {
                   <CardDescription>Manage security settings and access controls</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="space-y-0.5">
                       <Label>Two-Factor Authentication</Label>
                       <p className="text-sm text-muted-foreground">Additional security layer</p>
@@ -115,7 +115,7 @@ const SettingsView = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="space-y-0.5">
                       <Label>Automatic Backups</Label>
                       <p className="text-sm text-muted-foreground">Daily system backups</p>
@@ -147,7 +147,7 @@ const SettingsView = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="space-y-0.5">
                       <Label>Compact Mode</Label>
                       <p className="text-sm text-muted-foreground">Dense layout with smaller elements</p>

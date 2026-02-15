@@ -13,6 +13,7 @@ import Index from "./pages/Index";
 import Login from "./pages/login";
 import AdminLogin from "./pages/adminlogin";
 import AdminSignup from "./pages/adminsignup";
+import UserSignup from "./pages/usersignup";
 import AdminDashboard from "./pages/AdminDashboard";
 import AlertsView from "./pages/AlertsView";
 import CameraFeedsView from "./pages/CameraFeedsView";
@@ -37,6 +38,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Navigate to="/login" />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<UserSignup />} />
               <Route path="/adminlogin" element={<AdminLogin />} />
               <Route path="/adminsignup" element={<AdminSignup />} />
 

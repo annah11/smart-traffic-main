@@ -71,9 +71,9 @@ const SystemStatusView: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-semibold">System Status Overview</h1>
+    <div className="min-h-screen bg-background text-foreground p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <h1 className="text-xl sm:text-2xl font-semibold">System Status Overview</h1>
         <Button onClick={() => navigate(-1)} variant="outline" className="flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" /> Back
         </Button>

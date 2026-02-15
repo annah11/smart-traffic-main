@@ -1,8 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, Search, ChevronDown, Sun, Moon, Menu } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Sun, Moon, Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useTheme } from "next-themes";
@@ -40,22 +39,21 @@ export function DashboardHeader() {
       
       <Button
         variant="ghost"
-        size="sm"
+        size="icon"
         onClick={toggleTheme}
-        className="hidden sm:flex items-center"
+        className="h-9 w-9 shrink-0 sm:h-9 sm:w-auto sm:min-w-0 sm:px-3 sm:gap-2"
       >
         {theme === 'dark' ? (
           <>
-            <Sun className="mr-2 h-4 w-4" />
-            Light
+            <Sun className="h-4 w-4 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Light</span>
           </>
         ) : (
           <>
-            <Moon className="mr-2 h-4 w-4" />
-            Dark
+            <Moon className="h-4 w-4 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Dark</span>
           </>
         )}
-        <ChevronDown className="ml-2 h-4 w-4" />
       </Button>
     </header>
   );
